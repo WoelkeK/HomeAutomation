@@ -14,9 +14,28 @@ class MySensorsGateway
 
 #if ENABLE_SPRINKLER_MODULE
       for (byte zone = 0; zone < SPRINKLER_ZONE_COUNT; zone++) {
-        present(ChildId::SPRINKLER_FIRST + zone, S_BINARY, "Spryskiwacz");
+        present(
+          ChildId::SPRINKLER_FIRST + zone,
+          S_BINARY,
+          "Spryskiwacz"
+        );
       }
 #endif
+
+      present(
+        ChildId::FIRMWARE_INFO,
+        S_INFO,
+        "Firmware"
+      );
+
+      MyMessage firmwareMessage(
+        ChildId::FIRMWARE_INFO,
+        V_TEXT
+      );
+
+      send(
+        firmwareMessage.set(FIRMWARE_VERSION)
+      );
     }
 
     void handleMessage(const MyMessage& message)

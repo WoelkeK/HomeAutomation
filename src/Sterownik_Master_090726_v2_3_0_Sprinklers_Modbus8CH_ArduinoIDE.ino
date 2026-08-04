@@ -58,7 +58,6 @@
 #include "RelayManager.h"
 #include "Mcp23017Manager.h"
 
-#include "Application.h"
 
 Adafruit_MCP23017 mcp1;
 Adafruit_MCP23017 mcp2;
@@ -105,6 +104,7 @@ BounceMcp debouncer4[noRelays4];
 MyMessage msg4[noRelays4];
 
 #include "MySensorsGateway.h"
+#include "Application.h"
 
 Application application;
 MySensorsGateway mySensorsGateway;

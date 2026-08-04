@@ -12,4 +12,5 @@ namespace ChildId
   constexpr byte SPRINKLER_FIRST = 60;
   constexpr byte SPRINKLER_LAST = 67;
   constexpr byte SPRINKLER_COUNT = SPRINKLER_LAST - SPRINKLER_FIRST + 1;
+  constexpr byte FIRMWARE_INFO = 68;
 }
