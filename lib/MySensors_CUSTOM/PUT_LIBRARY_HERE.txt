@@ -1,0 +1,2 @@
+Wklej tutaj zawartość dokładnie tej zmodyfikowanej biblioteki MySensors,
+której używała działająca wersja Arduino IDE.

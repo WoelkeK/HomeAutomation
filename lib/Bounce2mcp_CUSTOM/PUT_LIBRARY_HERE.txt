@@ -1,0 +1,1 @@
+Wklej tutaj zawartość biblioteki Bounce2mcp używanej przez działającą wersję Arduino IDE.

@@ -1,0 +1,15 @@
+#pragma once
+
+// Centralna numeracja kanałów MySensors.
+namespace ChildId
+{
+  constexpr byte LIGHT_FIRST = 0;
+  constexpr byte LIGHT_LAST = 19;
+  constexpr byte OUTDOOR_LIGHT_SENSOR = 50;
+
+  // Wirtualne kanały sterujące spryskiwaczami z OpenHAB.
+  // Nie są powiązane z fizycznymi przyciskami.
+  constexpr byte SPRINKLER_FIRST = 60;
+  constexpr byte SPRINKLER_LAST = 67;
+  constexpr byte SPRINKLER_COUNT = SPRINKLER_LAST - SPRINKLER_FIRST + 1;
+}
