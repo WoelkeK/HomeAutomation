@@ -22,20 +22,20 @@ class MySensorsGateway
       }
 #endif
 
-      present(
-        ChildId::FIRMWARE_INFO,
-        S_INFO,
-        "Firmware"
-      );
+      present(ChildId::FIRMWARE_INFO, S_INFO, "Firmware");
+      present(ChildId::BUILD_INFO, S_INFO, "Build");
 
-      MyMessage firmwareMessage(
-        ChildId::FIRMWARE_INFO,
-        V_TEXT
-      );
+      MyMessage firmwareMessage(ChildId::FIRMWARE_INFO,V_TEXT);
+      MyMessage buildMessage(ChildId::BUILD_INFO, V_TEXT);
 
-      send(
-        firmwareMessage.set(FIRMWARE_VERSION)
-      );
+
+    firmwareMessage.set(FIRMWARE_VERSION);
+send(firmwareMessage);
+
+String buildInfo = String(BUILD_DATE) + " " + BUILD_TIME;
+
+buildMessage.set(buildInfo.c_str());
+send(buildMessage);
     }
 
     void handleMessage(const MyMessage& message)
