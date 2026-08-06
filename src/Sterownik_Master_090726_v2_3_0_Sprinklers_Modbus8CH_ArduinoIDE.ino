@@ -107,7 +107,7 @@ MyMessage msg4[noRelays4];
 #include "Application.h"
 
 Application application(relayManager);
-MySensorsGateway mySensorsGateway;
+MySensorsGateway mySensorsGateway(relayManager);
 
 void before()
 {

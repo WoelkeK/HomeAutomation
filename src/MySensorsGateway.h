@@ -3,11 +3,12 @@
 class MySensorsGateway
 {
   public:
-    MySensorsGateway()
-      : firmwareMessage(ChildId::FIRMWARE_INFO, V_TEXT),
-        buildMessage(ChildId::BUILD_INFO, V_TEXT)
-    {
-    }
+ explicit MySensorsGateway(RelayManager& relayManager)
+  : relayManager(relayManager),
+    firmwareMessage(ChildId::FIRMWARE_INFO, V_TEXT),
+    buildMessage(ChildId::BUILD_INFO, V_TEXT)
+{
+}
 
     void presentNode()
     {
@@ -79,6 +80,7 @@ class MySensorsGateway
   private:
     static constexpr unsigned long DIAGNOSTICS_INTERVAL_MS = 30000UL;
 
+    RelayManager& relayManager;
     MyMessage firmwareMessage;
     MyMessage buildMessage;
 
