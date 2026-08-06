@@ -8,6 +8,11 @@
 class Application
 {
   public:
+    explicit Application(RelayManager& relayManager)
+      : lightingController(relayManager)
+    {
+    }
+
     void begin()
     {
       setupManager.begin();
