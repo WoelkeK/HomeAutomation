@@ -38,6 +38,7 @@
 - Rezerwa pin 7 → relay 20
 
 ## 2.2.0 - fundament konfiguracji i Modbus
+
 - dodano `Version.h` i prezentację wersji przez `sendSketchInfo()`,
 - dodano centralne `HouseConfig.h` oraz `ChildIds.h`,
 - dodano wspólny nieblokujący `ModbusManager`,
@@ -45,3 +46,9 @@
 - zachowano dotychczasowy tryb TX-only i istniejącą numerację MySensors,
 - zarezerwowano adres Modbus 3 i Child ID 60-67 pod przyszłe spryskiwacze,
 - spryskiwacze nie są jeszcze prezentowane ani obsługiwane w tej wersji.
+
+## 2.3.1 - start migracji z Arduino IDE na projekt C++ VSCode
+
+- dodano repozytorium GIT
+- dodano do głównej pętli programu presents Child 68/69 firmware vesrion i build time.
+- zmodyfikowano klasę LightSensorController - przeniesiono kod z pomiary.ino

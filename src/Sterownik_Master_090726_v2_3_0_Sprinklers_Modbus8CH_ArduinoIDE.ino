@@ -160,6 +160,7 @@ void presentation()
 void loop()
 {
   application.update();
+  mySensorsGateway.update();
 #if ENABLE_SPRINKLER_MODULE
   sprinklerController.update();
 #endif
