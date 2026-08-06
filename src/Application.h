@@ -9,7 +9,7 @@ class Application
 {
   public:
     explicit Application(RelayManager& relayManager)
-      : lightingController(relayManager)
+      : lightingController(relayManager), rollerShutterController(relayManager)
     {
     }
 

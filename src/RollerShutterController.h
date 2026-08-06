@@ -1,8 +1,15 @@
 #pragma once
 
+#include "RelayManager.h"
+
 class RollerShutterController
 {
   public:
+    explicit RollerShutterController(RelayManager& relayManager)
+      : relayManager(relayManager)
+    {
+    }
+
     void update()
     {
       const unsigned long currentMillis = millis();
@@ -25,9 +32,11 @@ class RollerShutterController
             send(msg4[k].set(Relays4[k].relayState));
           }
 
-          if ((unsigned long)(
-                currentMillis - Relays3[k].buttonPushedMillis
-              ) > Relays3[k].turnOnDelay) {
+          if (
+            static_cast<unsigned long>(
+              currentMillis - Relays3[k].buttonPushedMillis
+            ) > Relays3[k].turnOnDelay
+          ) {
             relayManager.toggleRoller(Relays3[k]);
             send(msg3[k].set(Relays3[k].relayState));
 
@@ -37,9 +46,11 @@ class RollerShutterController
         }
 
         if (!Relays3[k].relayState) {
-          if ((unsigned long)(
-                currentMillis - Relays3[k].ledTurnedOnAt
-              ) >= Relays3[k].turnOffDelay) {
+          if (
+            static_cast<unsigned long>(
+              currentMillis - Relays3[k].ledTurnedOnAt
+            ) >= Relays3[k].turnOffDelay
+          ) {
             relayManager.toggleRoller(Relays3[k]);
             send(msg3[k].set(Relays3[k].relayState));
           }
@@ -62,9 +73,11 @@ class RollerShutterController
             send(msg3[k].set(Relays3[k].relayState));
           }
 
-          if ((unsigned long)(
-                currentMillis - Relays4[k].buttonPushedMillis
-              ) > Relays4[k].turnOnDelay) {
+          if (
+            static_cast<unsigned long>(
+              currentMillis - Relays4[k].buttonPushedMillis
+            ) > Relays4[k].turnOnDelay
+          ) {
             relayManager.toggleRoller(Relays4[k]);
             send(msg4[k].set(Relays4[k].relayState));
 
@@ -74,13 +87,18 @@ class RollerShutterController
         }
 
         if (!Relays4[k].relayState) {
-          if ((unsigned long)(
-                currentMillis - Relays4[k].ledTurnedOnAt
-              ) >= Relays4[k].turnOffDelay) {
+          if (
+            static_cast<unsigned long>(
+              currentMillis - Relays4[k].ledTurnedOnAt
+            ) >= Relays4[k].turnOffDelay
+          ) {
             relayManager.toggleRoller(Relays4[k]);
             send(msg4[k].set(Relays4[k].relayState));
           }
         }
       }
     }
+
+  private:
+    RelayManager& relayManager;
 };
