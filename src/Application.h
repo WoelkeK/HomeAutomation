@@ -8,8 +8,13 @@
 class Application
 {
   public:
-    explicit Application(RelayManager& relayManager)
-      : lightingController(relayManager), rollerShutterController(relayManager)
+    explicit Application(
+      RelayManager& relayManager,
+      Mcp23017Manager& mcp23017Manager
+    )
+      : setupManager(relayManager, mcp23017Manager),
+        lightingController(relayManager),
+        rollerShutterController(relayManager)
     {
     }
 
