@@ -57,6 +57,7 @@
 #include "StartupSafety.h"
 #include "RelayManager.h"
 #include "Mcp23017Manager.h"
+#include "LightingContext.h"
 
 
 Adafruit_MCP23017 mcp1;
@@ -68,12 +69,14 @@ ModbusMaster modbusMaster;
 WaveshareRelay32CH waveshare32ch;
 ModbusRelayDevice sprinklerRelay8ch;
 SprinklerController sprinklerController;
-ModbusRelayOutputDriver modbusRelayOutput;
 SDM630Meter sdm630Meter;
 ModbusTestConsole modbusTestConsole;
 WaveshareRawTxTest waveshareRawTxTest;
 WaveshareSafeDriverTest waveshareSafeDriverTest;
-RelayManager relayManager(modbusRelayOutput);
+
+//uwaga kolejność inicjalizacji obiektów ma znaczenie, bo niektóre zależą od innych
+ModbusRelayOutputDriver modbusRelayOutput;
+LightingContext lightingContext;
 Mcp23017Manager mcpManager;
 
 uint32_t SLEEP_TIME = 30 * 1000;
@@ -86,10 +89,6 @@ MyMessage msg(ChildId::OUTDOOR_LIGHT_SENSOR, V_LIGHT_LEVEL);
 
 bool detektor = false;
 bool detektor2 = false;
-
-RelayChannel Relays1[noRelays1];
-BounceMcp debouncer1[noRelays1];
-MyMessage msg1[noRelays1];
 
 RelayChannel Relays2[noRelays2];
 BounceMcp debouncer2[noRelays2];
@@ -106,8 +105,22 @@ MyMessage msg4[noRelays4];
 #include "MySensorsGateway.h"
 #include "Application.h"
 
-Application application(relayManager, mcpManager);
-MySensorsGateway mySensorsGateway(relayManager);
+RelayManager relayManager(
+  modbusRelayOutput,
+  lightingContext
+);
+
+
+Application application(
+  relayManager,
+  mcpManager,
+  lightingContext
+);
+
+MySensorsGateway mySensorsGateway(
+  relayManager,
+  lightingContext
+);
 
 void before()
 {

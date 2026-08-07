@@ -1,12 +1,10 @@
 #pragma once
-
-extern RelayChannel Relays1[noRelays1];
-
+#include "LightingContext.h"
 class RelayManager
 {
   public:
-    explicit RelayManager(ModbusRelayOutputDriver& modbusRelayOutput)
-      : modbusRelayOutput(modbusRelayOutput)
+    explicit RelayManager(ModbusRelayOutputDriver& modbusRelayOutput,  LightingContext& lightingContext)
+      : modbusRelayOutput(modbusRelayOutput), lightingContext(lightingContext)
     {
     }
 
@@ -40,7 +38,7 @@ class RelayManager
         return;
       }
 
-      writeLight(index, Relays1[index], state);
+      writeLight(index, lightingContext.relays[index], state);
     }
 
     void toggleLight(LightId id)
@@ -51,7 +49,7 @@ class RelayManager
         return;
       }
 
-      toggleLight(index, Relays1[index]);
+      toggleLight(index, lightingContext.relays[index]);
     }
 
     void writeLight(RelayChannel& relay, bool state)
@@ -101,6 +99,7 @@ class RelayManager
 
   private:
     ModbusRelayOutputDriver& modbusRelayOutput;
+    LightingContext& lightingContext;
 
     void writeOutput(
       const OutputAddress& output,

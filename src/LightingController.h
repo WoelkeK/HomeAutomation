@@ -1,41 +1,53 @@
 #pragma once
 
 #include "RelayManager.h"
+#include "LightingContext.h"
 
 class LightingController
 {
   public:
-    explicit LightingController(RelayManager& relayManager)
-      : relayManager(relayManager)
+    LightingController(
+      RelayManager& relayManager,
+      LightingContext& context
+    )
+      : relayManager(relayManager),
+        context(context)
     {
     }
 
     void update()
     {
       for (byte i = 0; i < noRelays1; i++) {
-        if (!debouncer1[i].update()) {
+        if (!context.debouncers[i].update()) {
           continue;
         }
 
-        const int buttonState = debouncer1[i].read();
+        const int buttonState =
+            context.debouncers[i].read();
 
         if (buttonState != LOW) {
           continue;
         }
 
-        relayManager.toggleLight(i, Relays1[i]);
+        relayManager.toggleLight(
+          i,
+          context.relays[i]
+        );
 
         send(
-          msg1[i].set(Relays1[i].relayState)
+          context.messages[i].set(
+            context.relays[i].relayState
+          )
         );
 
         saveState(
           i,
-          Relays1[i].relayState
+          context.relays[i].relayState
         );
       }
     }
 
   private:
     RelayManager& relayManager;
+    LightingContext& context;
 };

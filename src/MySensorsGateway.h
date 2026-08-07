@@ -3,8 +3,12 @@
 class MySensorsGateway
 {
   public:
- explicit MySensorsGateway(RelayManager& relayManager)
+ explicit MySensorsGateway(
+  RelayManager& relayManager,
+  LightingContext& lightingContext
+)
   : relayManager(relayManager),
+    lightingContext(lightingContext),
     firmwareMessage(ChildId::FIRMWARE_INFO, V_TEXT),
     buildMessage(ChildId::BUILD_INFO, V_TEXT)
 {
@@ -53,11 +57,11 @@ class MySensorsGateway
 
         relayManager.writeLight(
           lightIndex,
-          Relays1[lightIndex],
+          lightingContext.relays[lightIndex],
           message.getBool()
         );
 
-        saveState(lightIndex, Relays1[lightIndex].relayState);
+        saveState(lightIndex, lightingContext.relays[lightIndex].relayState);
         return;
       }
 
@@ -81,6 +85,7 @@ class MySensorsGateway
     static constexpr unsigned long DIAGNOSTICS_INTERVAL_MS = 30000UL;
 
     RelayManager& relayManager;
+    LightingContext& lightingContext;
     MyMessage firmwareMessage;
     MyMessage buildMessage;
 

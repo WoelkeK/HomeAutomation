@@ -8,10 +8,12 @@ class SetupManager
   public:
     SetupManager(
       RelayManager& relayManager,
-      Mcp23017Manager& mcpManager
+      Mcp23017Manager& mcpManager,
+        LightingContext& lightingContext
     )
       : relayManager(relayManager),
-        mcpManager(mcpManager)
+        mcpManager(mcpManager),
+        lightingContext(lightingContext)
     {
     }
 
@@ -26,42 +28,42 @@ class SetupManager
 
       // Initialize Relays1 with corresponding buttons
       for (int i = 0; i < noRelays1; i++) {
-        Relays1[i].buttonPin = LIGHT_CHANNELS[i].buttonPin;
-        Relays1[i].relayPin = LIGHT_CHANNELS[i].relayPin;
+       lightingContext.relays[i].buttonPin = LIGHT_CHANNELS[i].buttonPin;
+        lightingContext.relays[i].relayPin = LIGHT_CHANNELS[i].relayPin;
 
-        msg1[i].sensor = LIGHT_CHANNELS[i].sensorId;
-        msg1[i].type = V_LIGHT;
+        lightingContext.messages[i].sensor = LIGHT_CHANNELS[i].sensorId;
+        lightingContext.messages[i].type = V_LIGHT;
 
         mcpManager.configureInput(
           LIGHT_CHANNELS[i].buttonDevice,
-          Relays1[i].buttonPin
+          lightingContext.relays[i].buttonPin
         );
 
-        debouncer1[i] = BounceMcp();
+        lightingContext.debouncers[i] = BounceMcp();
 
-        debouncer1[i].attach(
+        lightingContext.debouncers[i].attach(
           mcpManager.device(LIGHT_CHANNELS[i].buttonDevice),
-          Relays1[i].buttonPin,
+         lightingContext.relays[i].buttonPin,
           100
         );
 
-        debouncer1[i].interval(50);
+        lightingContext.debouncers[i].interval(50);
 
         relayManager.safeOff(LIGHT_CHANNELS[i].output);
 
 #if RESTORE_LIGHTS_FROM_EEPROM_ON_BOOT
-        Relays1[i].relayState = loadState(i);
+        lightingContext.relays[i].relayState = loadState(i);
 #else
-        Relays1[i].relayState = false;
+        lightingContext.relays[i].relayState = false;
 #endif
 
         relayManager.writeLight(
           i,
-          Relays1[i],
-          Relays1[i].relayState
+          lightingContext.relays[i],
+          lightingContext.relays[i].relayState
         );
 
-        send(msg1[i].set(Relays1[i].relayState));
+        send(lightingContext.messages[i].set(lightingContext.relays[i].relayState));
       }
 
       // Initialize Relays3 - rolety gora
@@ -136,4 +138,5 @@ class SetupManager
   private:
     RelayManager& relayManager;
     Mcp23017Manager& mcpManager;
+    LightingContext& lightingContext;;
 };
