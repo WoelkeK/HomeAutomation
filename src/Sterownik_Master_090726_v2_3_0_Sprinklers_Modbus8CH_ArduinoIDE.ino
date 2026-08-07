@@ -73,7 +73,7 @@ SDM630Meter sdm630Meter;
 ModbusTestConsole modbusTestConsole;
 WaveshareRawTxTest waveshareRawTxTest;
 WaveshareSafeDriverTest waveshareSafeDriverTest;
-RelayManager relayManager;
+RelayManager relayManager(modbusRelayOutput);
 Mcp23017Manager mcpManager;
 
 uint32_t SLEEP_TIME = 30 * 1000;
