@@ -92,18 +92,6 @@ MyMessage msg(ChildId::OUTDOOR_LIGHT_SENSOR, V_LIGHT_LEVEL);
 bool detektor = false;
 bool detektor2 = false;
 
-RelayChannel Relays2[noRelays2];
-BounceMcp debouncer2[noRelays2];
-MyMessage msg2[noRelays2];
-
-// TimedRelayChannel Relays3[noRelays3];
-// BounceMcp debouncer3[noRelays3];
-// MyMessage msg3[noRelays3];
-
-// TimedRelayChannel Relays4[noRelays4];
-// BounceMcp debouncer4[noRelays4];
-// MyMessage msg4[noRelays4];
-
 #include "MySensorsGateway.h"
 #include "Application.h"
 
@@ -134,7 +122,7 @@ void setup()
 {
   pinMode(13, OUTPUT);
   digitalWrite(13, LOW);
-
+  
   // Druga warstwa zabezpieczenia: utrzymaj wszystkie lokalne przekaźniki OFF
   // zanim zacznie się pełna inicjalizacja MCP, EEPROM i MySensors.
   prepareLocalRelayPinsSafeOff();

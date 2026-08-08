@@ -30,37 +30,37 @@ class RelayManager
       );
     }
 
-    void writeLight(LightId id, bool state)
-    {
-      byte index = lightIndex(id);
+    // void writeLight(LightId id, bool state)
+    // {
+    //   byte index = lightIndex(id);
 
-      if (index >= noRelays1) {
-        return;
-      }
+    //   if (index >= noRelays1) {
+    //     return;
+    //   }
 
-      writeLight(index, lightingContext.relays[index], state);
-    }
+    //   writeLight(index, lightingContext.relays[index], state);
+    // }
 
-    void toggleLight(LightId id)
-    {
-      byte index = lightIndex(id);
+    // void toggleLight(LightId id)
+    // {
+    //   byte index = lightIndex(id);
 
-      if (index >= noRelays1) {
-        return;
-      }
+    //   if (index >= noRelays1) {
+    //     return;
+    //   }
 
-      toggleLight(index, lightingContext.relays[index]);
-    }
+    //   toggleLight(index, lightingContext.relays[index]);
+    // }
 
-    void writeLight(RelayChannel& relay, bool state)
-    {
-      relay.relayState = state;
+    // void writeLight(RelayChannel& relay, bool state)
+    // {
+    //   relay.relayState = state;
 
-      digitalWrite(
-        relay.relayPin,
-        relay.relayState ? RELAY_ON : RELAY_OFF
-      );
-    }
+    //   digitalWrite(
+    //     relay.relayPin,
+    //     relay.relayState ? RELAY_ON : RELAY_OFF
+    //   );
+    // }
 
     void writeRoller(TimedRelayChannel& relay, bool state)
     {
@@ -81,13 +81,13 @@ class RelayManager
       );
     }
 
-    void toggleLight(RelayChannel& relay)
-    {
-      writeLight(
-        relay,
-        !relay.relayState
-      );
-    }
+    // void toggleLight(RelayChannel& relay)
+    // {
+    //   writeLight(
+    //     relay,
+    //     !relay.relayState
+    //   );
+    // }
 
     void toggleRoller(TimedRelayChannel& relay)
     {

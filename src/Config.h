@@ -11,7 +11,6 @@
 
 // Liczba kanałów
 #define noRelays1 20
-#define noRelays2 7
 #define noRelays3 7
 #define noRelays4 7
 
