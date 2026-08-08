@@ -96,8 +96,7 @@ bool detektor2 = false;
 #include "Application.h"
 
 RelayManager relayManager(
-  modbusRelayOutput,
-  lightingContext
+  modbusRelayOutput
 );
 
 

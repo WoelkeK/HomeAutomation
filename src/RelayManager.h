@@ -1,10 +1,9 @@
 #pragma once
-#include "LightingContext.h"
 class RelayManager
 {
   public:
-    explicit RelayManager(ModbusRelayOutputDriver& modbusRelayOutput,  LightingContext& lightingContext)
-      : modbusRelayOutput(modbusRelayOutput), lightingContext(lightingContext)
+    explicit RelayManager(ModbusRelayOutputDriver& modbusRelayOutput)
+      : modbusRelayOutput(modbusRelayOutput)
     {
     }
 
@@ -99,8 +98,7 @@ class RelayManager
 
   private:
     ModbusRelayOutputDriver& modbusRelayOutput;
-    LightingContext& lightingContext;
-
+   
     void writeOutput(
       const OutputAddress& output,
       int physicalState
