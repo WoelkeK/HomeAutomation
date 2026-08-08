@@ -11,18 +11,20 @@ class Application
     explicit Application(
   RelayManager& relayManager,
   Mcp23017Manager& mcpManager,
-  LightingContext& lightingContext
+  LightingContext& lightingContext,
+   RollerContext& rollerContext
 )
   : setupManager(
       relayManager,
       mcpManager,
-      lightingContext
+      lightingContext,
+      rollerContext
     ),
     lightingController(
       relayManager,
       lightingContext
     ),
-    rollerShutterController(relayManager)
+    rollerShutterController(relayManager, rollerContext)
 {
 }
 

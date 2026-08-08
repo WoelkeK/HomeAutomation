@@ -58,12 +58,14 @@
 #include "RelayManager.h"
 #include "Mcp23017Manager.h"
 #include "LightingContext.h"
+#include "RollerContext.h"
 
 
 Adafruit_MCP23017 mcp1;
 Adafruit_MCP23017 mcp2;
 Adafruit_MCP23017 mcp3;
 
+RollerContext rollerContext;
 ModbusManager modbusManager;
 ModbusMaster modbusMaster;
 WaveshareRelay32CH waveshare32ch;
@@ -94,13 +96,13 @@ RelayChannel Relays2[noRelays2];
 BounceMcp debouncer2[noRelays2];
 MyMessage msg2[noRelays2];
 
-TimedRelayChannel Relays3[noRelays3];
-BounceMcp debouncer3[noRelays3];
-MyMessage msg3[noRelays3];
+// TimedRelayChannel Relays3[noRelays3];
+// BounceMcp debouncer3[noRelays3];
+// MyMessage msg3[noRelays3];
 
-TimedRelayChannel Relays4[noRelays4];
-BounceMcp debouncer4[noRelays4];
-MyMessage msg4[noRelays4];
+// TimedRelayChannel Relays4[noRelays4];
+// BounceMcp debouncer4[noRelays4];
+// MyMessage msg4[noRelays4];
 
 #include "MySensorsGateway.h"
 #include "Application.h"
@@ -114,7 +116,8 @@ RelayManager relayManager(
 Application application(
   relayManager,
   mcpManager,
-  lightingContext
+  lightingContext,
+  rollerContext
 );
 
 MySensorsGateway mySensorsGateway(

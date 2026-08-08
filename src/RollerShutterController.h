@@ -1,12 +1,17 @@
 #pragma once
 
 #include "RelayManager.h"
+#include "RollerContext.h"
 
 class RollerShutterController
 {
   public:
-    explicit RollerShutterController(RelayManager& relayManager)
-      : relayManager(relayManager)
+    RollerShutterController(
+      RelayManager& relayManager,
+      RollerContext& rollerContext
+    )
+      : relayManager(relayManager),
+        rollerContext(rollerContext)
     {
     }
 
@@ -15,85 +20,144 @@ class RollerShutterController
       const unsigned long currentMillis = millis();
 
       for (byte k = 0; k < noRelays3; k++) {
-        if (debouncer3[k].update()) {
-          const int value3 = debouncer3[k].read();
+
+        // GORA
+        if (rollerContext.upDebouncers[k].update()) {
+          const int value3 =
+              rollerContext.upDebouncers[k].read();
 
           if (value3 == LOW) {
-            Relays3[k].buttonPushedMillis = currentMillis;
-            Relays3[k].ROLReady = true;
+            rollerContext.upRelays[k].buttonPushedMillis =
+                currentMillis;
+
+            rollerContext.upRelays[k].ROLReady = true;
           }
         }
 
-        if (Relays3[k].ROLReady) {
-          Relays4[k].ROLReady = false;
+        if (rollerContext.upRelays[k].ROLReady) {
+          rollerContext.downRelays[k].ROLReady = false;
 
-          if (!Relays4[k].relayState) {
-            relayManager.toggleRoller(Relays4[k]);
-            send(msg4[k].set(Relays4[k].relayState));
+          if (!rollerContext.downRelays[k].relayState) {
+            relayManager.toggleRoller(
+              rollerContext.downRelays[k]
+            );
+
+            send(
+              rollerContext.downMessages[k].set(
+                rollerContext.downRelays[k].relayState
+              )
+            );
           }
 
           if (
             static_cast<unsigned long>(
-              currentMillis - Relays3[k].buttonPushedMillis
-            ) > Relays3[k].turnOnDelay
+              currentMillis -
+              rollerContext.upRelays[k].buttonPushedMillis
+            ) > rollerContext.upRelays[k].turnOnDelay
           ) {
-            relayManager.toggleRoller(Relays3[k]);
-            send(msg3[k].set(Relays3[k].relayState));
+            relayManager.toggleRoller(
+              rollerContext.upRelays[k]
+            );
 
-            Relays3[k].ledTurnedOnAt = currentMillis;
-            Relays3[k].ROLReady = false;
+            send(
+              rollerContext.upMessages[k].set(
+                rollerContext.upRelays[k].relayState
+              )
+            );
+
+            rollerContext.upRelays[k].ledTurnedOnAt =
+                currentMillis;
+
+            rollerContext.upRelays[k].ROLReady = false;
           }
         }
 
-        if (!Relays3[k].relayState) {
+        if (!rollerContext.upRelays[k].relayState) {
           if (
             static_cast<unsigned long>(
-              currentMillis - Relays3[k].ledTurnedOnAt
-            ) >= Relays3[k].turnOffDelay
+              currentMillis -
+              rollerContext.upRelays[k].ledTurnedOnAt
+            ) >= rollerContext.upRelays[k].turnOffDelay
           ) {
-            relayManager.toggleRoller(Relays3[k]);
-            send(msg3[k].set(Relays3[k].relayState));
+            relayManager.toggleRoller(
+              rollerContext.upRelays[k]
+            );
+
+            send(
+              rollerContext.upMessages[k].set(
+                rollerContext.upRelays[k].relayState
+              )
+            );
           }
         }
 
-        if (debouncer4[k].update()) {
-          const int value4 = debouncer4[k].read();
+        // DOL
+        if (rollerContext.downDebouncers[k].update()) {
+          const int value4 =
+              rollerContext.downDebouncers[k].read();
 
           if (value4 == LOW) {
-            Relays4[k].buttonPushedMillis = currentMillis;
-            Relays4[k].ROLReady = true;
+            rollerContext.downRelays[k].buttonPushedMillis =
+                currentMillis;
+
+            rollerContext.downRelays[k].ROLReady = true;
           }
         }
 
-        if (Relays4[k].ROLReady) {
-          Relays3[k].ROLReady = false;
+        if (rollerContext.downRelays[k].ROLReady) {
+          rollerContext.upRelays[k].ROLReady = false;
 
-          if (!Relays3[k].relayState) {
-            relayManager.toggleRoller(Relays3[k]);
-            send(msg3[k].set(Relays3[k].relayState));
+          if (!rollerContext.upRelays[k].relayState) {
+            relayManager.toggleRoller(
+              rollerContext.upRelays[k]
+            );
+
+            send(
+              rollerContext.upMessages[k].set(
+                rollerContext.upRelays[k].relayState
+              )
+            );
           }
 
           if (
             static_cast<unsigned long>(
-              currentMillis - Relays4[k].buttonPushedMillis
-            ) > Relays4[k].turnOnDelay
+              currentMillis -
+              rollerContext.downRelays[k].buttonPushedMillis
+            ) > rollerContext.downRelays[k].turnOnDelay
           ) {
-            relayManager.toggleRoller(Relays4[k]);
-            send(msg4[k].set(Relays4[k].relayState));
+            relayManager.toggleRoller(
+              rollerContext.downRelays[k]
+            );
 
-            Relays4[k].ledTurnedOnAt = currentMillis;
-            Relays4[k].ROLReady = false;
+            send(
+              rollerContext.downMessages[k].set(
+                rollerContext.downRelays[k].relayState
+              )
+            );
+
+            rollerContext.downRelays[k].ledTurnedOnAt =
+                currentMillis;
+
+            rollerContext.downRelays[k].ROLReady = false;
           }
         }
 
-        if (!Relays4[k].relayState) {
+        if (!rollerContext.downRelays[k].relayState) {
           if (
             static_cast<unsigned long>(
-              currentMillis - Relays4[k].ledTurnedOnAt
-            ) >= Relays4[k].turnOffDelay
+              currentMillis -
+              rollerContext.downRelays[k].ledTurnedOnAt
+            ) >= rollerContext.downRelays[k].turnOffDelay
           ) {
-            relayManager.toggleRoller(Relays4[k]);
-            send(msg4[k].set(Relays4[k].relayState));
+            relayManager.toggleRoller(
+              rollerContext.downRelays[k]
+            );
+
+            send(
+              rollerContext.downMessages[k].set(
+                rollerContext.downRelays[k].relayState
+              )
+            );
           }
         }
       }
@@ -101,4 +165,5 @@ class RollerShutterController
 
   private:
     RelayManager& relayManager;
+    RollerContext& rollerContext;
 };
