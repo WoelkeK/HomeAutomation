@@ -1,8 +1,16 @@
 #pragma once
 
+
+#include <MySensors.h>
+#include <Bounce2mcp.h>
+
+#include "Config.h"
+#include "ChannelConfig.h"
+#include "RelayTypes.h"
 #include "RelayManager.h"
 #include "Mcp23017Manager.h"
-
+#include "LightingContext.h"
+#include "RollerContext.h"
 
 class SetupManager
 {
@@ -10,8 +18,8 @@ class SetupManager
     SetupManager(
       RelayManager& relayManager,
       Mcp23017Manager& mcpManager,
-        LightingContext& lightingContext,
-        RollerContext& rollerContext
+      LightingContext& lightingContext,
+      RollerContext& rollerContext
     )
       : relayManager(relayManager),
         mcpManager(mcpManager),
@@ -38,10 +46,6 @@ class SetupManager
     
 void initializeHardware()
 {
-  for (int thisReading = 0; thisReading < numReadings; thisReading++) {
-    readings[thisReading] = 0;
-  }
-
   mcpManager.begin();
 }
 

@@ -1,5 +1,10 @@
 #pragma once
 
+#include <MySensors.h>
+#include <Bounce2mcp.h>
+
+#include "Config.h"
+#include "RelayTypes.h"
 struct RollerContext
 {
   TimedRelayChannel upRelays[noRelays3];

@@ -3,6 +3,14 @@
 class LightSensorController
 {
   public:
+    LightSensorController()
+      : message(ChildId::OUTDOOR_LIGHT_SENSOR, V_LIGHT_LEVEL)
+    {
+      for (int& reading : readings) {
+        reading = 0;
+      }
+    }
+
     void update()
     {
       const unsigned long currentMillis = millis();
@@ -19,31 +27,35 @@ class LightSensorController
           analogRead(LIGHT_SENSOR_ANALOG_PIN) / 10;
 
       total += readings[readIndex];
+
       readIndex++;
 
       if (readIndex >= numReadings) {
         readIndex = 0;
       }
 
-      average = total / numReadings;
+      const int average = total / numReadings;
 
       const bool firstReport = !hasReported;
+
       const bool reportIntervalElapsed =
           currentMillis - lastReportMillis >= REPORT_INTERVAL_MS;
 
       const int difference =
-          average > lastaverage
-              ? average - lastaverage
-              : lastaverage - average;
+          average > lastAverage
+              ? average - lastAverage
+              : lastAverage - average;
 
       const bool valueChangedEnough =
           difference >= CHANGE_THRESHOLD;
 
-      if (firstReport ||
-          (reportIntervalElapsed && valueChangedEnough)) {
-        send(msg.set(average));
+      if (
+        firstReport ||
+        (reportIntervalElapsed && valueChangedEnough)
+      ) {
+        send(message.set(average));
 
-        lastaverage = average;
+        lastAverage = average;
         lastReportMillis = currentMillis;
         hasReported = true;
       }
@@ -54,7 +66,15 @@ class LightSensorController
     static constexpr unsigned long REPORT_INTERVAL_MS = 30000UL;
     static constexpr int CHANGE_THRESHOLD = 2;
 
+    int readings[numReadings] = {};
+    int readIndex = 0;
+    int total = 0;
+    int lastAverage = 0;
+
     unsigned long lastSampleMillis = 0;
     unsigned long lastReportMillis = 0;
+
     bool hasReported = false;
+
+    MyMessage message;
 };

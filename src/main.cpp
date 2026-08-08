@@ -84,12 +84,12 @@ LightingContext lightingContext;
 Mcp23017Manager mcpManager;
 
 // uint32_t SLEEP_TIME = 30 * 1000;
-int readings[numReadings];
-int readIndex = 0;
-int total = 0;
-int average = 0;
-int lastaverage = 0;
-MyMessage msg(ChildId::OUTDOOR_LIGHT_SENSOR, V_LIGHT_LEVEL);
+// int readings[numReadings];
+// int readIndex = 0;
+// int total = 0;
+// int average = 0;
+// int lastaverage = 0;
+// MyMessage msg(ChildId::OUTDOOR_LIGHT_SENSOR, V_LIGHT_LEVEL);
 
 // bool detektor = false;
 // bool detektor2 = false;
