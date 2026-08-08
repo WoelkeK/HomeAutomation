@@ -16,12 +16,12 @@ class SetupManager
 {
   public:
     SetupManager(
-      OutputManager& OutputManager,
+      OutputManager& outputManager,
       Mcp23017Manager& mcpManager,
       LightingContext& lightingContext,
       RollerContext& rollerContext
     )
-      : OutputManager(OutputManager),
+      :outputManager(outputManager),
         mcpManager(mcpManager),
         lightingContext(lightingContext),
         rollerContext(rollerContext)
@@ -37,7 +37,7 @@ class SetupManager
 
 
   private:
-    OutputManager& OutputManager;
+    OutputManager& outputManager;
     Mcp23017Manager& mcpManager;
     LightingContext& lightingContext;
     RollerContext& rollerContext;
@@ -73,7 +73,7 @@ void initializeLights()
 
     lightingContext.debouncers[i].interval(50);
 
-    OutputManager.safeOff(LIGHT_CHANNELS[i].output);
+    outputManager.safeOff(LIGHT_CHANNELS[i].output);
 
 #if RESTORE_LIGHTS_FROM_EEPROM_ON_BOOT
     lightingContext.relays[i].relayState = loadState(i);
@@ -81,7 +81,7 @@ void initializeLights()
     lightingContext.relays[i].relayState = false;
 #endif
 
-    OutputManager.writeLight(
+    outputManager.writeLight(
       i,
       lightingContext.relays[i],
       lightingContext.relays[i].relayState
@@ -117,11 +117,11 @@ void initializeRollers()
       rollerContext.upRelays[k].buttonPin
     );
 
-    OutputManager.safeOff(
+    outputManager.safeOff(
       rollerContext.upRelays[k].relayPin
     );
 
-    OutputManager.writeRoller(
+    outputManager.writeRoller(
       rollerContext.upRelays[k],
       true
     );
@@ -165,11 +165,11 @@ void initializeRollers()
       rollerContext.downRelays[k].buttonPin
     );
 
-    OutputManager.safeOff(
+    outputManager.safeOff(
       rollerContext.downRelays[k].relayPin
     );
 
-    OutputManager.writeRoller(
+    outputManager.writeRoller(
       rollerContext.downRelays[k],
       true
     );

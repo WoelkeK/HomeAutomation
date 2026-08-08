@@ -1,5 +1,6 @@
 #pragma once
-
+#include <Arduino.h>
+#include <MySensors.h>
 #include "OutputManager.h"
 #include "LightingContext.h"
 

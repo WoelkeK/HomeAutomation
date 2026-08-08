@@ -12,7 +12,7 @@ class Application
   OutputManager& outputManager,
   Mcp23017Manager& mcpManager,
   LightingContext& lightingContext,
-   RollerContext& rollerContext
+  RollerContext& rollerContext
 )
   : setupManager(
     outputManager,

@@ -113,7 +113,8 @@ Application application(
 
 MySensorsGateway mySensorsGateway(
   outputManager,
-  lightingContext
+  lightingContext,
+  sprinklerController
 );
 
 void before()

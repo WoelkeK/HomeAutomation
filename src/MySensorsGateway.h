@@ -1,14 +1,27 @@
 #pragma once
 
+
+#include <Arduino.h>
+#include <MySensors.h>
+
+#include "Version.h"
+#include "ChildIds.h"
+#include "Config.h"
+#include "SystemConfig.h"
+#include "OutputManager.h"
+#include "LightingContext.h"
+#include "SprinklerController.h"
 class MySensorsGateway
 {
   public:
- explicit MySensorsGateway(
+explicit MySensorsGateway(
   OutputManager& outputManager,
-  LightingContext& lightingContext
+  LightingContext& lightingContext,
+  SprinklerController& sprinklerController
 )
   : outputManager(outputManager),
     lightingContext(lightingContext),
+    sprinklerController(sprinklerController),
     firmwareMessage(ChildId::FIRMWARE_INFO, V_TEXT),
     buildMessage(ChildId::BUILD_INFO, V_TEXT)
 {
@@ -86,6 +99,7 @@ class MySensorsGateway
 
     OutputManager& outputManager;
     LightingContext& lightingContext;
+    SprinklerController& sprinklerController;
     MyMessage firmwareMessage;
     MyMessage buildMessage;
 

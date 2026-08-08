@@ -1,5 +1,9 @@
 #pragma once
 
+#include <Arduino.h>
+#include <MySensors.h>
+#include <Bounce2mcp.h>
+
 #include "OutputManager.h"
 #include "RollerContext.h"
 
