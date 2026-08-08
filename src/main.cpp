@@ -16,6 +16,8 @@
 // - Serial1 pozostaje dla Modbus, Serial2 dla sieci MySensors RS485
 // - używana jest zmodyfikowana biblioteka MySensors z AUTO_DIRECTION bez pinu DE
 
+#include <Arduino.h>
+
 #define MY_GATEWAY_SERIAL
 #define MY_BAUD_RATE 115200
 
