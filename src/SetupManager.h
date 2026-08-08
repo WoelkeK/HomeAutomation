@@ -7,7 +7,7 @@
 #include "Config.h"
 #include "ChannelConfig.h"
 #include "RelayTypes.h"
-#include "RelayManager.h"
+#include "OutputManager.h"
 #include "Mcp23017Manager.h"
 #include "LightingContext.h"
 #include "RollerContext.h"
@@ -16,12 +16,12 @@ class SetupManager
 {
   public:
     SetupManager(
-      RelayManager& relayManager,
+      OutputManager& OutputManager,
       Mcp23017Manager& mcpManager,
       LightingContext& lightingContext,
       RollerContext& rollerContext
     )
-      : relayManager(relayManager),
+      : OutputManager(OutputManager),
         mcpManager(mcpManager),
         lightingContext(lightingContext),
         rollerContext(rollerContext)
@@ -37,7 +37,7 @@ class SetupManager
 
 
   private:
-    RelayManager& relayManager;
+    OutputManager& OutputManager;
     Mcp23017Manager& mcpManager;
     LightingContext& lightingContext;
     RollerContext& rollerContext;
@@ -73,7 +73,7 @@ void initializeLights()
 
     lightingContext.debouncers[i].interval(50);
 
-    relayManager.safeOff(LIGHT_CHANNELS[i].output);
+    OutputManager.safeOff(LIGHT_CHANNELS[i].output);
 
 #if RESTORE_LIGHTS_FROM_EEPROM_ON_BOOT
     lightingContext.relays[i].relayState = loadState(i);
@@ -81,7 +81,7 @@ void initializeLights()
     lightingContext.relays[i].relayState = false;
 #endif
 
-    relayManager.writeLight(
+    OutputManager.writeLight(
       i,
       lightingContext.relays[i],
       lightingContext.relays[i].relayState
@@ -117,11 +117,11 @@ void initializeRollers()
       rollerContext.upRelays[k].buttonPin
     );
 
-    relayManager.safeOff(
+    OutputManager.safeOff(
       rollerContext.upRelays[k].relayPin
     );
 
-    relayManager.writeRoller(
+    OutputManager.writeRoller(
       rollerContext.upRelays[k],
       true
     );
@@ -165,11 +165,11 @@ void initializeRollers()
       rollerContext.downRelays[k].buttonPin
     );
 
-    relayManager.safeOff(
+    OutputManager.safeOff(
       rollerContext.downRelays[k].relayPin
     );
 
-    relayManager.writeRoller(
+    OutputManager.writeRoller(
       rollerContext.downRelays[k],
       true
     );

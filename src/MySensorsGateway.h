@@ -4,10 +4,10 @@ class MySensorsGateway
 {
   public:
  explicit MySensorsGateway(
-  RelayManager& relayManager,
+  OutputManager& outputManager,
   LightingContext& lightingContext
 )
-  : relayManager(relayManager),
+  : outputManager(outputManager),
     lightingContext(lightingContext),
     firmwareMessage(ChildId::FIRMWARE_INFO, V_TEXT),
     buildMessage(ChildId::BUILD_INFO, V_TEXT)
@@ -55,7 +55,7 @@ class MySensorsGateway
           message.sensor <= ChildId::LIGHT_LAST) {
         const byte lightIndex = message.sensor - ChildId::LIGHT_FIRST;
 
-        relayManager.writeLight(
+        outputManager.writeLight(
           lightIndex,
           lightingContext.relays[lightIndex],
           message.getBool()
@@ -84,7 +84,7 @@ class MySensorsGateway
   private:
     static constexpr unsigned long DIAGNOSTICS_INTERVAL_MS = 30000UL;
 
-    RelayManager& relayManager;
+    OutputManager& outputManager;
     LightingContext& lightingContext;
     MyMessage firmwareMessage;
     MyMessage buildMessage;

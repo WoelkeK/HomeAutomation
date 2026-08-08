@@ -57,7 +57,7 @@
 #include "WaveshareSafeDriverTest.h"
 #include "ChannelConfig.h"
 #include "StartupSafety.h"
-#include "RelayManager.h"
+#include "OutputManager.h"
 #include "Mcp23017Manager.h"
 #include "LightingContext.h"
 #include "RollerContext.h"
@@ -99,20 +99,20 @@ Mcp23017Manager mcpManager;
 #include "MySensorsGateway.h"
 #include "Application.h"
 
-RelayManager relayManager(
+OutputManager outputManager(
   modbusRelayOutput
 );
 
 
 Application application(
-  relayManager,
+  outputManager,
   mcpManager,
   lightingContext,
   rollerContext
 );
 
 MySensorsGateway mySensorsGateway(
-  relayManager,
+  outputManager,
   lightingContext
 );
 
@@ -125,7 +125,7 @@ void setup()
 {
   pinMode(13, OUTPUT);
   digitalWrite(13, LOW);
-  
+   
   // Druga warstwa zabezpieczenia: utrzymaj wszystkie lokalne przekaźniki OFF
   // zanim zacznie się pełna inicjalizacja MCP, EEPROM i MySensors.
   prepareLocalRelayPinsSafeOff();

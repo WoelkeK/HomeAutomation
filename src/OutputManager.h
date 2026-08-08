@@ -1,8 +1,8 @@
 #pragma once
-class RelayManager
+class OutputManager
 {
   public:
-    explicit RelayManager(ModbusRelayOutputDriver& modbusRelayOutput)
+    explicit OutputManager(ModbusRelayOutputDriver& modbusRelayOutput)
       : modbusRelayOutput(modbusRelayOutput)
     {
     }

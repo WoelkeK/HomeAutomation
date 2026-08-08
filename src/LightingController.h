@@ -1,17 +1,18 @@
 #pragma once
 
-#include "RelayManager.h"
+#include "OutputManager.h"
 #include "LightingContext.h"
 
 class LightingController
 {
   public:
     LightingController(
-      RelayManager& relayManager,
+      OutputManager& outputManager,
       LightingContext& context
     )
-      : relayManager(relayManager),
+      : outputManager(outputManager),
         context(context)
+     
     {
     }
 
@@ -29,7 +30,7 @@ class LightingController
           continue;
         }
 
-        relayManager.toggleLight(
+        outputManager.toggleLight(
           i,
           context.relays[i]
         );
@@ -48,6 +49,7 @@ class LightingController
     }
 
   private:
-    RelayManager& relayManager;
+    OutputManager& outputManager;
     LightingContext& context;
+
 };

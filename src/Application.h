@@ -9,22 +9,22 @@ class Application
 {
   public:
     explicit Application(
-  RelayManager& relayManager,
+  OutputManager& outputManager,
   Mcp23017Manager& mcpManager,
   LightingContext& lightingContext,
    RollerContext& rollerContext
 )
   : setupManager(
-      relayManager,
+    outputManager,
       mcpManager,
       lightingContext,
       rollerContext
     ),
     lightingController(
-      relayManager,
+      outputManager,
       lightingContext
     ),
-    rollerShutterController(relayManager, rollerContext)
+    rollerShutterController(outputManager, rollerContext)
 {
 }
 

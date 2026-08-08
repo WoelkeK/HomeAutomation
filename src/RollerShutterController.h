@@ -1,16 +1,16 @@
 #pragma once
 
-#include "RelayManager.h"
+#include "OutputManager.h"
 #include "RollerContext.h"
 
 class RollerShutterController
 {
   public:
     RollerShutterController(
-      RelayManager& relayManager,
+      OutputManager& outputManager,
       RollerContext& rollerContext
     )
-      : relayManager(relayManager),
+      : outputManager(outputManager),
         rollerContext(rollerContext)
     {
     }
@@ -38,7 +38,7 @@ class RollerShutterController
           rollerContext.downRelays[k].ROLReady = false;
 
           if (!rollerContext.downRelays[k].relayState) {
-            relayManager.toggleRoller(
+            outputManager.toggleRoller(
               rollerContext.downRelays[k]
             );
 
@@ -55,7 +55,7 @@ class RollerShutterController
               rollerContext.upRelays[k].buttonPushedMillis
             ) > rollerContext.upRelays[k].turnOnDelay
           ) {
-            relayManager.toggleRoller(
+            outputManager.toggleRoller(
               rollerContext.upRelays[k]
             );
 
@@ -79,7 +79,7 @@ class RollerShutterController
               rollerContext.upRelays[k].ledTurnedOnAt
             ) >= rollerContext.upRelays[k].turnOffDelay
           ) {
-            relayManager.toggleRoller(
+            outputManager.toggleRoller(
               rollerContext.upRelays[k]
             );
 
@@ -108,7 +108,7 @@ class RollerShutterController
           rollerContext.upRelays[k].ROLReady = false;
 
           if (!rollerContext.upRelays[k].relayState) {
-            relayManager.toggleRoller(
+            outputManager.toggleRoller(
               rollerContext.upRelays[k]
             );
 
@@ -125,7 +125,7 @@ class RollerShutterController
               rollerContext.downRelays[k].buttonPushedMillis
             ) > rollerContext.downRelays[k].turnOnDelay
           ) {
-            relayManager.toggleRoller(
+            outputManager.toggleRoller(
               rollerContext.downRelays[k]
             );
 
@@ -149,7 +149,7 @@ class RollerShutterController
               rollerContext.downRelays[k].ledTurnedOnAt
             ) >= rollerContext.downRelays[k].turnOffDelay
           ) {
-            relayManager.toggleRoller(
+            outputManager.toggleRoller(
               rollerContext.downRelays[k]
             );
 
@@ -164,6 +164,6 @@ class RollerShutterController
     }
 
   private:
-    RelayManager& relayManager;
+    OutputManager& outputManager;
     RollerContext& rollerContext;
 };
