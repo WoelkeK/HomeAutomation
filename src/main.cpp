@@ -61,6 +61,7 @@
 #include "Mcp23017Manager.h"
 #include "LightingContext.h"
 #include "RollerContext.h"
+#include "EventBus.h"
 
 
 Adafruit_MCP23017 mcp1;
@@ -77,6 +78,7 @@ SDM630Meter sdm630Meter;
 ModbusTestConsole modbusTestConsole;
 WaveshareRawTxTest waveshareRawTxTest;
 WaveshareSafeDriverTest waveshareSafeDriverTest;
+EventBus eventBus;
 
 //uwaga kolejność inicjalizacji obiektów ma znaczenie, bo niektóre zależą od innych
 ModbusRelayOutputDriver modbusRelayOutput;
