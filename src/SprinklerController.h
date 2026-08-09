@@ -80,11 +80,6 @@ class SprinklerController
       }
     }
 
-    bool state(byte zone) const
-    {
-      return zone < SPRINKLER_ZONE_COUNT && _states[zone];
-    }
-
     void reportAll()
     {
       for (byte zone = 0; zone < SPRINKLER_ZONE_COUNT; zone++) {

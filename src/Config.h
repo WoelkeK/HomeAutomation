@@ -34,11 +34,6 @@ const int numReadings = 100;
 #define MODBUS_RTU_SERIAL Serial1
 #define MODBUS_RTU_BAUD_RATE HouseConfig::Modbus::BAUD_RATE
 
-// Kierunek nadajnika RS485 dla magistrali Modbus.
-// 0 = konwerter z automatycznym kierunkiem transmisji albo ręcznie spięte DE/RE.
-// 1 = klasyczny MAX485 z pinem DE/RE sterowanym z Arduino.
-#define MODBUS_RTU_USE_DE_PIN 0
-
 // Rezerwacja pod przyszły licznik energii SDM630 na tej samej magistrali.
 #define ENABLE_SDM630_METER 0
 #define SDM630_DEFAULT_SLAVE_ID HouseConfig::Modbus::SDM630_SLAVE_ID
