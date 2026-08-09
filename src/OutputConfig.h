@@ -1,18 +1,20 @@
 #pragma once
+#include <Arduino.h>
 
 // Etap 5: rozdzielenie fizycznego sposobu sterowania wyjściem.
 // Docelowo światła będą mogły być stopniowo przenoszone z lokalnych pinów Mega
 // na moduły przekaźnikowe Modbus RTU, bez zmiany logiki LightingController.
+// Zmiana nazewnictwa: OutputDriver -> OutputType, OutputDriverConfig -> OutputConfig, OutputDriverType -> OutputType.
 
-enum class OutputBackend : byte
+enum class OutputType : byte
 {
-  MegaLocalPin,
-  ModbusRelay32CH
+  MegaPin,
+  ModbusRelay
 };
 
-struct OutputAddress
+struct OutputConfig
 {
-  OutputBackend backend;
+  OutputType type;
   int megaPin;
   byte modbusSlaveId;
   byte modbusChannel;

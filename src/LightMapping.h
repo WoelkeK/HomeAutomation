@@ -39,20 +39,20 @@ const LightOutputMapping LIGHT_OUTPUT_MAP[noRelays1] = {
   {LightId::RezerwaPin7,            WAVESHARE_RELAY_SLAVE_ID, 20  }
 };
 
-inline OutputAddress modbusOutputAddress(byte slaveId, byte relayChannel)
+inline OutputConfig modbusOutputConfig(byte slaveId, byte relayChannel)
 {
-  return {OutputBackend::ModbusRelay32CH, -1, slaveId, relayChannel};
+  return {OutputType::ModbusRelay, -1, slaveId, relayChannel};
 }
 
-inline OutputAddress outputForLight(LightId id)
+inline OutputConfig outputForLight(LightId id)
 {
   for (byte i = 0; i < noRelays1; i++) {
     if (LIGHT_OUTPUT_MAP[i].id == id) {
-      return modbusOutputAddress(LIGHT_OUTPUT_MAP[i].slaveId, LIGHT_OUTPUT_MAP[i].relayChannel);
+      return modbusOutputConfig(LIGHT_OUTPUT_MAP[i].slaveId, LIGHT_OUTPUT_MAP[i].relayChannel);
     }
   }
 
   // Fallback bezpieczeństwa: nie powinien wystąpić, ale w razie błędu mapowania
   // nie sterujemy żadnym fizycznym lokalnym pinem.
-  return modbusOutputAddress(WAVESHARE_RELAY_SLAVE_ID, 1);
+  return modbusOutputConfig(WAVESHARE_RELAY_SLAVE_ID, 1);
 }

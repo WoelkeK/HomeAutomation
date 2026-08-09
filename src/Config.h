@@ -1,4 +1,5 @@
 #pragma once
+# include <Arduino.h>
 
 // Nazwa i wersja firmware są zdefiniowane centralnie w Version.h.
 
@@ -19,20 +20,7 @@ const byte addr1 = 0x00; // uwaga: zamieniony adres z 3
 const byte addr2 = 0x01;
 const byte addr3 = 0x03;
 
-// Przekaźniki świateł
-const int relayPin1[] = {37, 43, 8, A14, 45, 34, 35, 46, 49, 7, A12, 36, 47, 41, 40, 39, 42, A13, 44, 38};
-const int buttonPin1[] = {13, 12, 11, 10, 8, 7, 6, 5, 4, 3, 2, 1, 0, 15, 14, 13, 12, 11, 10, 8};
-
-// Przekaźniki rolety Góra podpięte do 3 expandera MCP3
-const int relayPin3[] = {9, 27, 23, 25, 11, 31, 33};
-const int buttonPin3[] = {15, 12, 10, 8, 7, 2, 1};
-
-// Przekaźniki rolety Dół podpięte do 3 expandera MCP3
-const int relayPin4[] = {10, 26, 22, 24, 12, 30, 32};
-const int buttonPin4[] = {14, 13, 11, 9, 6, 3, 0};
-
 const int numReadings = 100;
-
 
 // Bezpieczny start przekaźników
 // 0 = po starcie wszystkie światła lokalne pozostają OFF, niezależnie od EEPROM.

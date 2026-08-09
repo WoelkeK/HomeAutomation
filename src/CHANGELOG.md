@@ -9,7 +9,7 @@
 
 ### Zmieniono
 
-- Wszystkie światła zostały przeniesione na `OutputBackend::ModbusRelay32CH`.
+- Wszystkie światła zostały przeniesione na `OutputType::ModbusRelay`.
 - `ChannelConfig.h` korzysta teraz z `outputForLight(LightId::...)`.
 - Rolety pozostają na lokalnych pinach Mega.
 - MySensors/OpenHAB bez zmian.

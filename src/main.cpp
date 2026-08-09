@@ -6,7 +6,7 @@
 // - zachowana dotychczasowa logika działania
 // - zachowana konfiguracja MySensors RS485
 // - zachowana numeracja pinów i sensorów
-// - dodany OutputBackend pod stopniową migrację świateł na Modbus
+// - dodany OutputType pod stopniową migrację świateł na Modbus
 // - dodane logiczne nazwy LightId według rzeczywistych lokalizacji
 // - dodany realny testowy sterownik Waveshare 32CH po Modbus RTU
 // - dodany bezpieczny driver Waveshare TX-only bez blokowania MySensors/OpenHAB
@@ -33,7 +33,6 @@
 #include <Wire.h>
 #include "Adafruit_MCP23017.h"
 #include <Bounce2mcp.h>
-//#include <Bounce2.h>
 
 #include "Version.h"
 #include "ChildIds.h"
@@ -41,16 +40,15 @@
 #include "Config.h"
 #include "SystemConfig.h"
 #include "RelayTypes.h"
-#include "OutputBackend.h"
+#include "OutputConfig.h"
 #include "LightId.h"
 #include "LightMapping.h"
-#include "RollerId.h"
 #include "ModbusManager.h"
 #include "ModbusRelayDevice.h"
 #include "SprinklerController.h"
 #include "ModbusMaster.h"
 #include "WaveshareRelay32CH.h"
-#include "ModbusRelayOutputDriver.h"
+#include "ModbusOutputDriver.h"
 #include "SDM630Meter.h"
 #include "ModbusTestConsole.h"
 #include "WaveshareRawTxTest.h"
@@ -61,8 +59,6 @@
 #include "Mcp23017Manager.h"
 #include "LightingContext.h"
 #include "RollerContext.h"
-#include "EventBus.h"
-
 
 Adafruit_MCP23017 mcp1;
 Adafruit_MCP23017 mcp2;
@@ -73,28 +69,14 @@ ModbusManager modbusManager;
 ModbusMaster modbusMaster;
 WaveshareRelay32CH waveshare32ch;
 ModbusRelayDevice sprinklerRelay8ch;
+ModbusRelayDevice rollerRelay16ch;
 SprinklerController sprinklerController;
 SDM630Meter sdm630Meter;
-ModbusTestConsole modbusTestConsole;
-WaveshareRawTxTest waveshareRawTxTest;
-WaveshareSafeDriverTest waveshareSafeDriverTest;
-EventBus eventBus;
 
 //uwaga kolejność inicjalizacji obiektów ma znaczenie, bo niektóre zależą od innych
-ModbusRelayOutputDriver modbusRelayOutput;
+ModbusOutputDriver modbusRelayOutput;
 LightingContext lightingContext;
 Mcp23017Manager mcpManager;
-
-// uint32_t SLEEP_TIME = 30 * 1000;
-// int readings[numReadings];
-// int readIndex = 0;
-// int total = 0;
-// int average = 0;
-// int lastaverage = 0;
-// MyMessage msg(ChildId::OUTDOOR_LIGHT_SENSOR, V_LIGHT_LEVEL);
-
-// bool detektor = false;
-// bool detektor2 = false;
 
 #include "MySensorsGateway.h"
 #include "Application.h"
@@ -102,7 +84,6 @@ Mcp23017Manager mcpManager;
 OutputManager outputManager(
   modbusRelayOutput
 );
-
 
 Application application(
   outputManager,
@@ -135,8 +116,24 @@ void setup()
   // Etap 10C: używamy potwierdzonego sprzętowo trybu TX-only.
   // Nie czekamy na odpowiedź Modbus, więc MySensors/OpenHAB nie jest blokowany.
   modbusManager.begin(MODBUS_RTU_SERIAL, MODBUS_RTU_BAUD_RATE);
-  waveshare32ch.begin(modbusManager, WAVESHARE_DEFAULT_SLAVE_ID);
-  modbusRelayOutput.attach(waveshare32ch);
+  waveshare32ch.begin(
+  modbusManager,
+  WAVESHARE_DEFAULT_SLAVE_ID
+);
+
+rollerRelay16ch.begin(
+  modbusManager,
+  ROLLER_RELAY_SLAVE_ID,
+  ROLLER_RELAY_CHANNEL_COUNT
+);
+
+modbusRelayOutput.attachLightModule(
+  waveshare32ch
+);
+
+modbusRelayOutput.attachRollerModule(
+  rollerRelay16ch
+);
 
 #if ENABLE_SPRINKLER_MODULE
   sprinklerRelay8ch.begin(modbusManager, SPRINKLER_RELAY_SLAVE_ID, SPRINKLER_ZONE_COUNT);
@@ -154,10 +151,6 @@ void setup()
   // Po prezentacji MySensors zgłoś do OpenHAB bezpieczny stan początkowy OFF.
   sprinklerController.reportAll();
 #endif
-
-  // Testy Modbus startują po inicjalizacji aplikacji, żeby nie wpływać na start MySensors.
-  waveshareRawTxTest.begin();
-  waveshareSafeDriverTest.begin();
 }
 
 void presentation()
@@ -172,9 +165,6 @@ void loop()
 #if ENABLE_SPRINKLER_MODULE
   sprinklerController.update();
 #endif
-  modbusTestConsole.update();
-  waveshareRawTxTest.update();
-  waveshareSafeDriverTest.update();
 }
 
 void receive(const MyMessage & message)

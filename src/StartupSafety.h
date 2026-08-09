@@ -1,8 +1,17 @@
 #pragma once
 
-// Ustawia lokalne piny przekaźników w stan bezpieczny jak najwcześniej po starcie.
-// Dla przekaźników ACTIVE LOW stan OFF = HIGH.
-// Ważne: digitalWrite(RELAY_OFF) przed pinMode(OUTPUT) zapobiega krótkiemu impulsowi LOW.
+#include <Arduino.h>
+
+#include "Config.h"
+#include "OutputConfig.h"
+#include "ChannelConfig.h"
+
+// Ustawia lokalny pin przekaźnika w bezpieczny stan OFF.
+// Dla przekaźników ACTIVE LOW:
+// OFF = HIGH.
+//
+// Najpierw ustawiamy stan HIGH przez digitalWrite(),
+// a dopiero potem pinMode(OUTPUT), żeby uniknąć krótkiego impulsu LOW.
 inline void setPinSafeOff(int pin)
 {
   digitalWrite(pin, RELAY_OFF);
@@ -11,17 +20,33 @@ inline void setPinSafeOff(int pin)
 
 inline void prepareLocalRelayPinsSafeOff()
 {
+  // ŚWIATŁA
   for (int i = 0; i < noRelays1; i++) {
-    if (LIGHT_CHANNELS[i].output.backend == OutputBackend::MegaLocalPin) {
-      setPinSafeOff(LIGHT_CHANNELS[i].output.megaPin);
+    const OutputConfig& output =
+        LIGHT_CHANNELS[i].output;
+
+    if (output.type == OutputType::MegaPin) {
+      setPinSafeOff(output.megaPin);
     }
   }
 
+  // ROLETY - GÓRA
   for (int i = 0; i < noRelays3; i++) {
-    setPinSafeOff(relayPin3[i]);
+    const OutputConfig& output =
+        ROLLER_UP_CHANNELS[i].output;
+
+    if (output.type == OutputType::MegaPin) {
+      setPinSafeOff(output.megaPin);
+    }
   }
 
+  // ROLETY - DÓŁ
   for (int i = 0; i < noRelays4; i++) {
-    setPinSafeOff(relayPin4[i]);
+    const OutputConfig& output =
+        ROLLER_DOWN_CHANNELS[i].output;
+
+    if (output.type == OutputType::MegaPin) {
+      setPinSafeOff(output.megaPin);
+    }
   }
 }
