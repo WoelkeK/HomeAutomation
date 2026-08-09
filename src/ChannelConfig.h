@@ -3,13 +3,7 @@
 // Sterownik_Master_090726 v2.0.1: konfiguracja kanałów w jednym miejscu.
 // Wejścia pozostają na MCP23017, rolety zostają na lokalnych wyjściach Mega.
 // Wszystkie światła korzystają z LightMapping.h i są kierowane na Waveshare Modbus RTU 32CH.
-
-// enum class ChannelKind : byte
-// {
-//   Light,
-//   RollerUp,
-//   RollerDown
-// };
+// W komentarzach podano pin Mega, który odpowiada danemu kanałowi. W przypadku przekaźników Modbus nie ma fizycznego pinu Mega, więc w komentarzu podano pin z Waveshare.
 
 enum class InputDevice : byte
 {
@@ -63,22 +57,34 @@ const LightChannelConfig LIGHT_CHANNELS[noRelays1] = {
 
 const RollerChannelConfig ROLLER_UP_CHANNELS[noRelays3] = {
   // {0, 9, 15, InputDevice::MCP3, {OutputType::MegaPin, 9, 0, 0}, 30000},
+  // {1, 27, 12, InputDevice::MCP3, {OutputType::MegaPin, 27, 0, 0}, 30000},
+  // {2, 23, 10, InputDevice::MCP3, {OutputType::MegaPin, 23, 0, 0}, 30000},
+  // {3, 25, 8, InputDevice::MCP3, {OutputType::MegaPin, 25, 0, 0}, 30000},
+  // {4, 11, 7, InputDevice::MCP3, {OutputType::MegaPin, 11, 0, 0}, 30000},
+  // {5, 31, 2, InputDevice::MCP3, {OutputType::MegaPin, 31, 0, 0}, 30000},
+  // {6, 33, 1, InputDevice::MCP3, {OutputType::MegaPin, 33, 0, 0}, 30000}
   {0, 9, 15, InputDevice::MCP3, {OutputType::ModbusRelay, 0, ROLLER_RELAY_SLAVE_ID, 1}, 30000},
-  {1, 27, 12, InputDevice::MCP3, {OutputType::MegaPin, 27, 0, 0}, 30000},
-  {2, 23, 10, InputDevice::MCP3, {OutputType::MegaPin, 23, 0, 0}, 30000},
-  {3, 25, 8, InputDevice::MCP3, {OutputType::MegaPin, 25, 0, 0}, 30000},
-  {4, 11, 7, InputDevice::MCP3, {OutputType::MegaPin, 11, 0, 0}, 30000},
-  {5, 31, 2, InputDevice::MCP3, {OutputType::MegaPin, 31, 0, 0}, 30000},
-  {6, 33, 1, InputDevice::MCP3, {OutputType::MegaPin, 33, 0, 0}, 30000}
+  {1, 27, 12, InputDevice::MCP3, {OutputType::ModbusRelay, 0, ROLLER_RELAY_SLAVE_ID, 3}, 30000},
+  {2, 23, 10, InputDevice::MCP3, {OutputType::ModbusRelay, 0, ROLLER_RELAY_SLAVE_ID, 5}, 30000},
+  {3, 25, 8, InputDevice::MCP3, {OutputType::ModbusRelay, 0, ROLLER_RELAY_SLAVE_ID, 7}, 30000},
+  {4, 11, 7, InputDevice::MCP3, {OutputType::ModbusRelay, 0, ROLLER_RELAY_SLAVE_ID, 9}, 30000},
+  {5, 31, 2, InputDevice::MCP3, {OutputType::ModbusRelay, 0, ROLLER_RELAY_SLAVE_ID, 11}, 30000},
+  {6, 33, 1, InputDevice::MCP3, {OutputType::ModbusRelay, 0, ROLLER_RELAY_SLAVE_ID, 13}, 30000}
 };
 
 const RollerChannelConfig ROLLER_DOWN_CHANNELS[noRelays4] = {
   // {0, 10, 14, InputDevice::MCP3, {OutputType::MegaPin, 10, 0, 0}, 23000},
+  // {1, 26, 13, InputDevice::MCP3, {OutputType::MegaPin, 26, 0, 0}, 23000},
+  // {2, 22, 11, InputDevice::MCP3, {OutputType::MegaPin, 22, 0, 0}, 23000},
+  // {3, 24, 9, InputDevice::MCP3, {OutputType::MegaPin, 24, 0, 0}, 23000},
+  // {4, 12, 6, InputDevice::MCP3, {OutputType::MegaPin, 12, 0, 0}, 23000},
+  // {5, 30, 3, InputDevice::MCP3, {OutputType::MegaPin, 30, 0, 0}, 23000},
+  // {6, 32, 0, InputDevice::MCP3, {OutputType::MegaPin, 32, 0, 0}, 23000}
   {0, 10, 14, InputDevice::MCP3, {OutputType::ModbusRelay, 0, ROLLER_RELAY_SLAVE_ID, 2}, 23000},
-  {1, 26, 13, InputDevice::MCP3, {OutputType::MegaPin, 26, 0, 0}, 23000},
-  {2, 22, 11, InputDevice::MCP3, {OutputType::MegaPin, 22, 0, 0}, 23000},
-  {3, 24, 9, InputDevice::MCP3, {OutputType::MegaPin, 24, 0, 0}, 23000},
-  {4, 12, 6, InputDevice::MCP3, {OutputType::MegaPin, 12, 0, 0}, 23000},
-  {5, 30, 3, InputDevice::MCP3, {OutputType::MegaPin, 30, 0, 0}, 23000},
-  {6, 32, 0, InputDevice::MCP3, {OutputType::MegaPin, 32, 0, 0}, 23000}
+  {1, 26, 13, InputDevice::MCP3, {OutputType::ModbusRelay, 0, ROLLER_RELAY_SLAVE_ID, 4}, 23000},
+  {2, 22, 11, InputDevice::MCP3, {OutputType::ModbusRelay, 0, ROLLER_RELAY_SLAVE_ID, 6}, 23000},
+  {3, 24, 9, InputDevice::MCP3, {OutputType::ModbusRelay, 0, ROLLER_RELAY_SLAVE_ID, 8}, 23000},
+  {4, 12, 6, InputDevice::MCP3, {OutputType::ModbusRelay, 0, ROLLER_RELAY_SLAVE_ID, 10}, 23000},
+  {5, 30, 3, InputDevice::MCP3, {OutputType::ModbusRelay, 0, ROLLER_RELAY_SLAVE_ID, 12}, 23000},
+  {6, 32, 0, InputDevice::MCP3, {OutputType::ModbusRelay, 0, ROLLER_RELAY_SLAVE_ID, 14}, 23000}
 };
