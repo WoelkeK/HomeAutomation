@@ -4,9 +4,6 @@ extern Adafruit_MCP23017 mcp1;
 extern Adafruit_MCP23017 mcp2;
 extern Adafruit_MCP23017 mcp3;
 
-// Cienka warstwa nad trzema ekspanderami MCP23017.
-// Na razie zachowuje dokładnie te same wywołania co stary kod.
-
 class Mcp23017Manager
 {
   public:

@@ -1,7 +1,6 @@
 #pragma once
 
-// Szkielet pod przyszły licznik energii SDM630 na tej samej magistrali Modbus RTU.
-// W tym etapie nie jest jeszcze używany przez logikę domu.
+//Obecnie nie jest jeszcze używany przez logikę domu.
 
 class SDM630Meter
 {
@@ -26,7 +25,6 @@ class SDM630Meter
     }
 
     // Placeholder: SDM630 zwykle zwraca wartości jako 32-bit float w dwóch rejestrach.
-    // Konkretne adresy rejestrów dodamy w następnym etapie, po ustaleniu wariantu licznika.
     bool readHoldingRegisters(uint16_t startAddress, uint16_t quantity, uint16_t* registers, byte registerCapacity, byte& registersRead)
     {
       if (!isReady()) {

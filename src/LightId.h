@@ -1,6 +1,5 @@
 #pragma once
 
-// Etap 9: logiczne identyfikatory obwodów światła według rzeczywistych lokalizacji.
 // Kolejność enum MUSI odpowiadać istniejącej numeracji MySensors 0..19.
 // Dzięki temu OpenHAB/Domoticz dalej widzi te same kanały, a kod może używać nazw.
 
