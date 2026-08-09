@@ -7,7 +7,6 @@
 #include "Version.h"
 #include "ChildIds.h"
 #include "Config.h"
-#include "SystemConfig.h"
 #include "OutputManager.h"
 #include "LightingContext.h"
 #include "SprinklerController.h"
