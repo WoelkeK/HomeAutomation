@@ -27,8 +27,3 @@ enum class LightId : byte
   KorytarzOczkaSufit = 18,    // sensor 18, Mega pin 44
   Kotlownia = 19              // sensor 19, Mega pin 38
 };
-
-inline byte lightIndex(LightId id)
-{
-  return static_cast<byte>(id);
-}
