@@ -40,7 +40,6 @@
 #include "ModbusRelayDevice.h"
 #include "SprinklerController.h"
 #include "ModbusMaster.h"
-#include "WaveshareRelay32CH.h"
 #include "ModbusOutputDriver.h"
 #include "SDM630Meter.h"
 #include "ChannelConfig.h"
@@ -105,10 +104,10 @@ void setup()
 
   // Światła - Waveshare 32CH
   hardware.lightRelay32.begin(
-    hardware.modbusManager,
-    HouseConfig::Modbus::LIGHT_RELAY_SLAVE_ID
-  );
-
+  hardware.modbusManager,
+  HouseConfig::Modbus::LIGHT_RELAY_SLAVE_ID,
+  HouseConfig::Modbus::LIGHT_RELAY_CHANNEL_COUNT
+);
   // Rolety - Waveshare 16CH
   hardware.rollerRelay16.begin(
     hardware.modbusManager,

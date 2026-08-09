@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Arduino.h>
+
 // Centralna konfiguracja sprzętowa domu.
 namespace HouseConfig
 {
@@ -12,6 +14,7 @@ namespace HouseConfig
 
     constexpr unsigned long BAUD_RATE = 9600;
 
+    constexpr byte LIGHT_RELAY_CHANNEL_COUNT = 32;
     constexpr byte ROLLER_RELAY_CHANNEL_COUNT = 16;
   }
 }

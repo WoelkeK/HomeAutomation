@@ -1,8 +1,6 @@
 #pragma once
 
 #include <Arduino.h>
-
-#include "WaveshareRelay32CH.h"
 #include "ModbusRelayDevice.h"
 
 class ModbusOutputDriver
@@ -14,7 +12,7 @@ class ModbusOutputDriver
     {
     }
 
-    void attachLightModule(WaveshareRelay32CH& module)
+    void attachLightModule(ModbusRelayDevice& module)
     {
       _lightModule = &module;
     }
@@ -53,22 +51,8 @@ class ModbusOutputDriver
       return false;
     }
 
-    bool readAll(uint32_t& stateMask)
-    {
-      if (
-        _lightModule == nullptr ||
-        !_lightModule->isReady()
-      ) {
-        stateMask = 0;
-        return false;
-      }
-
-      return _lightModule->readAll(stateMask);
-    }
-
   private:
-    WaveshareRelay32CH* _lightModule;
-    ModbusRelayDevice* _rollerModule;
+  ModbusRelayDevice* _lightModule;
+  ModbusRelayDevice* _rollerModule;
 };
-
 extern ModbusOutputDriver modbusRelayOutput;
