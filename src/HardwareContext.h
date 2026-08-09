@@ -12,9 +12,9 @@ class HardwareContext
     ModbusManager modbusManager;
     ModbusMaster modbusMaster;
 
-    ModbusRelayDevice lightRelay32;
-    ModbusRelayDevice rollerRelay16;
-    ModbusRelayDevice sprinklerRelay8;
+    ModbusRelayDevice lightRelayModule;
+    ModbusRelayDevice rollerRelayModule    ;
+    ModbusRelayDevice sprinklerRelayModule;
 
     SDM630Meter sdm630Meter;
     ModbusOutputDriver outputDriver;

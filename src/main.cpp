@@ -103,37 +103,37 @@ void setup()
   );
 
   // Światła - Waveshare 32CH
-  hardware.lightRelay32.begin(
+  hardware.lightRelayModule.begin(
   hardware.modbusManager,
   HouseConfig::Modbus::LIGHT_RELAY_SLAVE_ID,
   HouseConfig::Modbus::LIGHT_RELAY_CHANNEL_COUNT
 );
   // Rolety - Waveshare 16CH
-  hardware.rollerRelay16.begin(
+  hardware.rollerRelayModule.begin(
     hardware.modbusManager,
     HouseConfig::Modbus::ROLLER_RELAY_SLAVE_ID,
     HouseConfig::Modbus::ROLLER_RELAY_CHANNEL_COUNT
   );
 
   hardware.outputDriver.attachLightModule(
-    hardware.lightRelay32
+    hardware.lightRelayModule
   );
 
   hardware.outputDriver.attachRollerModule(
-    hardware.rollerRelay16
+    hardware.rollerRelayModule
   );
 
 #if ENABLE_SPRINKLER_MODULE
 
   // Spryskiwacze - Waveshare 8CH
-  hardware.sprinklerRelay8.begin(
+  hardware.sprinklerRelayModule.begin(
     hardware.modbusManager,
     HouseConfig::Modbus::SPRINKLER_RELAY_SLAVE_ID,
     SPRINKLER_ZONE_COUNT
   );
 
   sprinklerController.begin(
-    hardware.sprinklerRelay8
+    hardware.sprinklerRelayModule
   );
 
 #endif
