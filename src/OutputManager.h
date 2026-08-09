@@ -37,16 +37,6 @@ class OutputManager
       );
     }
 
-    // void writeRoller(TimedRelayChannel& relay, bool state)
-    // {
-    //   relay.relayState = state;
-
-    //   digitalWrite(
-    //     relay.relayPin,
-    //     relay.relayState ? RELAY_OFF : RELAY_ON
-    //   );
-    // }
-
 void writeRoller(
   const OutputConfig& output,
   TimedRelayChannel& relay,
@@ -72,7 +62,6 @@ void writeRoller(
   }
 }
 
-
     void toggleLight(byte channelIndex, RelayChannel& relay)
     {
       writeLight(
@@ -81,14 +70,6 @@ void writeRoller(
         !relay.relayState
       );
     }
-
-    // void toggleRoller(TimedRelayChannel& relay)
-    // {
-    //   writeRoller(
-    //     relay,
-    //     !relay.relayState
-    //   );
-    // }
 
 void toggleRoller(
   const OutputConfig& output,

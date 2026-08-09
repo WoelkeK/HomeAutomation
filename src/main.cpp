@@ -1,20 +1,14 @@
- // Pierwsza wersja sterowania lokalnego plus feedback i odczyt z Domoticz
-// Działające światła, plus obsługa satela, rolety sterowane prawidłowo
-// Kolejna modyfikacja - dołączenie pomiaru swiatła na zewnątrz 18/11/19 22:55
+// Sterownik Master
 //
-// Sterownik_Master_090726 v2.1.0 USB Gateway (Arduino IDE):
-// - zachowana dotychczasowa logika działania
-// - zachowana konfiguracja MySensors RS485
-// - zachowana numeracja pinów i sensorów
-// - dodany OutputType pod stopniową migrację świateł na Modbus
-// - dodane logiczne nazwy LightId według rzeczywistych lokalizacji
-// - dodany realny testowy sterownik Waveshare 32CH po Modbus RTU
-// - dodany bezpieczny driver Waveshare TX-only bez blokowania MySensors/OpenHAB
-// - wszystkie światła przeniesione na Waveshare przez LightMapping.h
-// - rolety pozostają na lokalnych wyjściach Mega
+// Aktualny układ:
+// - światła: Waveshare 32CH po Modbus RTU
+// - rolety: Waveshare 16CH po Modbus RTU
+// - spryskiwacze: Waveshare 8CH po Modbus RTU
+// - wejścia lokalne: MCP23017
 // - Mega działa jako bramka MySensors przez USB
-// - Serial1 pozostaje dla Modbus, Serial2 dla sieci MySensors RS485
-// - używana jest zmodyfikowana biblioteka MySensors z AUTO_DIRECTION bez pinu DE
+// - Serial1: Modbus RTU
+// - Serial2: MySensors RS485
+// - MySensors z AUTO_DIRECTION bez pinu DE
 
 #include <Arduino.h>
 
@@ -22,7 +16,6 @@
 #define MY_BAUD_RATE 115200
 
 #define MY_RS485
-//#define MY_RS485_DE_PIN 15
 #define MY_RS485_BAUD_RATE 19200
 #define MY_RS485_HWSERIAL Serial2
 #define MY_RS485_AUTO_DIRECTION
@@ -33,7 +26,7 @@
 #include <Wire.h>
 #include "Adafruit_MCP23017.h"
 #include <Bounce2mcp.h>
-
+#include "HardwareContext.h"
 #include "Version.h"
 #include "ChildIds.h"
 #include "HouseConfig.h"
@@ -50,9 +43,6 @@
 #include "WaveshareRelay32CH.h"
 #include "ModbusOutputDriver.h"
 #include "SDM630Meter.h"
-#include "ModbusTestConsole.h"
-#include "WaveshareRawTxTest.h"
-#include "WaveshareSafeDriverTest.h"
 #include "ChannelConfig.h"
 #include "StartupSafety.h"
 #include "OutputManager.h"
@@ -64,25 +54,20 @@ Adafruit_MCP23017 mcp1;
 Adafruit_MCP23017 mcp2;
 Adafruit_MCP23017 mcp3;
 
-RollerContext rollerContext;
-ModbusManager modbusManager;
-ModbusMaster modbusMaster;
-WaveshareRelay32CH waveshare32ch;
-ModbusRelayDevice sprinklerRelay8ch;
-ModbusRelayDevice rollerRelay16ch;
-SprinklerController sprinklerController;
-SDM630Meter sdm630Meter;
+HardwareContext hardware;
 
-//uwaga kolejność inicjalizacji obiektów ma znaczenie, bo niektóre zależą od innych
-ModbusOutputDriver modbusRelayOutput;
+RollerContext rollerContext;
 LightingContext lightingContext;
+
+SprinklerController sprinklerController;
+
 Mcp23017Manager mcpManager;
 
 #include "MySensorsGateway.h"
 #include "Application.h"
 
 OutputManager outputManager(
-  modbusRelayOutput
+  hardware.outputDriver
 );
 
 Application application(
@@ -107,49 +92,70 @@ void setup()
 {
   pinMode(13, OUTPUT);
   digitalWrite(13, LOW);
-   
-  // Druga warstwa zabezpieczenia: utrzymaj wszystkie lokalne przekaźniki OFF
-  // zanim zacznie się pełna inicjalizacja MCP, EEPROM i MySensors.
+
+  // Bezpieczny stan lokalnych wyjść przed pełną inicjalizacją.
   prepareLocalRelayPinsSafeOff();
 
 #if ENABLE_WAVESHARE_MODBUS
-  // Etap 10C: używamy potwierdzonego sprzętowo trybu TX-only.
-  // Nie czekamy na odpowiedź Modbus, więc MySensors/OpenHAB nie jest blokowany.
-  modbusManager.begin(MODBUS_RTU_SERIAL, MODBUS_RTU_BAUD_RATE);
-  waveshare32ch.begin(
-  modbusManager,
-  WAVESHARE_DEFAULT_SLAVE_ID
-);
 
-rollerRelay16ch.begin(
-  modbusManager,
-  ROLLER_RELAY_SLAVE_ID,
-  ROLLER_RELAY_CHANNEL_COUNT
-);
+  hardware.modbusManager.begin(
+    MODBUS_RTU_SERIAL,
+    MODBUS_RTU_BAUD_RATE
+  );
 
-modbusRelayOutput.attachLightModule(
-  waveshare32ch
-);
+  // Światła - Waveshare 32CH
+  hardware.lightRelay32.begin(
+    hardware.modbusManager,
+    HouseConfig::Modbus::LIGHT_RELAY_SLAVE_ID
+  );
 
-modbusRelayOutput.attachRollerModule(
-  rollerRelay16ch
-);
+  // Rolety - Waveshare 16CH
+  hardware.rollerRelay16.begin(
+    hardware.modbusManager,
+    HouseConfig::Modbus::ROLLER_RELAY_SLAVE_ID,
+    HouseConfig::Modbus::ROLLER_RELAY_CHANNEL_COUNT
+  );
+
+  hardware.outputDriver.attachLightModule(
+    hardware.lightRelay32
+  );
+
+  hardware.outputDriver.attachRollerModule(
+    hardware.rollerRelay16
+  );
 
 #if ENABLE_SPRINKLER_MODULE
-  sprinklerRelay8ch.begin(modbusManager, SPRINKLER_RELAY_SLAVE_ID, SPRINKLER_ZONE_COUNT);
-  sprinklerController.begin(sprinklerRelay8ch);
+
+  // Spryskiwacze - Waveshare 8CH
+  hardware.sprinklerRelay8.begin(
+    hardware.modbusManager,
+    HouseConfig::Modbus::SPRINKLER_RELAY_SLAVE_ID,
+    SPRINKLER_ZONE_COUNT
+  );
+
+  sprinklerController.begin(
+    hardware.sprinklerRelay8
+  );
+
 #endif
 #endif
 
 #if ENABLE_SDM630_METER
-  sdm630Meter.begin(modbusMaster, SDM630_DEFAULT_SLAVE_ID);
+
+  hardware.sdm630Meter.begin(
+  hardware.modbusMaster,
+  SDM630_DEFAULT_SLAVE_ID
+  );
+
 #endif
 
   application.begin();
 
 #if ENABLE_SPRINKLER_MODULE
-  // Po prezentacji MySensors zgłoś do OpenHAB bezpieczny stan początkowy OFF.
+
+  // Bezpieczny stan początkowy wszystkich sekcji.
   sprinklerController.reportAll();
+
 #endif
 }
 
@@ -162,12 +168,13 @@ void loop()
 {
   application.update();
   mySensorsGateway.update();
+
 #if ENABLE_SPRINKLER_MODULE
   sprinklerController.update();
 #endif
 }
 
-void receive(const MyMessage & message)
+void receive(const MyMessage& message)
 {
   mySensorsGateway.handleMessage(message);
 }

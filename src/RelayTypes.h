@@ -6,8 +6,6 @@
 class RelayChannel
 {
   public:
-    int buttonPin;
-    int relayPin;
     boolean relayState;
 };
 
@@ -21,10 +19,4 @@ class TimedRelayChannel : public RelayChannel
     unsigned long ledTurnedOnAt;
     unsigned long turnOnDelay = 500;
     unsigned long turnOffDelay;
-    unsigned long debounce = 10;
-
-    TimedRelayChannel()
-      : turnOffDelay(30000)
-    {
-    }
 };

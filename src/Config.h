@@ -1,8 +1,5 @@
 #pragma once
-# include <Arduino.h>
-
-// Nazwa i wersja firmware są zdefiniowane centralnie w Version.h.
-
+#include <Arduino.h>
 // Czujnik światła
 #define LIGHT_SENSOR_ANALOG_PIN A0
 
@@ -36,48 +33,19 @@ const int numReadings = 100;
 #define ENABLE_WAVESHARE_MODBUS 1
 #define MODBUS_RTU_SERIAL Serial1
 #define MODBUS_RTU_BAUD_RATE HouseConfig::Modbus::BAUD_RATE
-#define MODBUS_RTU_TIMEOUT_MS HouseConfig::Modbus::TIMEOUT_MS
-#define MODBUS_RTU_RETRIES HouseConfig::Modbus::RETRIES
 
 // Kierunek nadajnika RS485 dla magistrali Modbus.
 // 0 = konwerter z automatycznym kierunkiem transmisji albo ręcznie spięte DE/RE.
 // 1 = klasyczny MAX485 z pinem DE/RE sterowanym z Arduino.
 #define MODBUS_RTU_USE_DE_PIN 0
-#define MODBUS_RTU_DE_PIN HouseConfig::Modbus::DE_PIN
-
-// Tryb testowy przez Serial Monitor.
-// Działa tylko, gdy ENABLE_WAVESHARE_MODBUS = 1.
-// Komendy: m1on, m1off, malloff, mread, mdiag
-// W Etapie 10C komendy zapisu są TX-only, czyli nie czekają na odpowiedź i nie blokują MySensors.
-#define ENABLE_WAVESHARE_SERIAL_TEST 0
-
-// Najbezpieczniejszy test TX dla Waveshare.
-// 1 = co kilka sekund wysyła surową ramkę 0x05 ON/OFF na przekaźnik 1 po Serial1,
-//     bez czekania na odpowiedź. Dzięki temu nie blokuje MySensors/OpenHAB.
-// 0 = wyłączony.
-#define ENABLE_WAVESHARE_RAW_TX_TEST 0
-#define WAVESHARE_RAW_TEST_INTERVAL_MS 2000
-
-// Waveshare RTU Modbus Relay Module 32CH
-#define WAVESHARE_DEFAULT_SLAVE_ID HouseConfig::Modbus::LIGHT_RELAY_SLAVE_ID
 
 // Rezerwacja pod przyszły licznik energii SDM630 na tej samej magistrali.
 #define ENABLE_SDM630_METER 0
 #define SDM630_DEFAULT_SLAVE_ID HouseConfig::Modbus::SDM630_SLAVE_ID
 
-
-// Etap 10C: bezpieczny test drivera WaveshareRelay32CH.
-// Działa tylko, gdy ENABLE_WAVESHARE_MODBUS = 1.
-// 1 = co kilka sekund przełącza wybrany kanał przez klasę WaveshareRelay32CH,
-//     bez oczekiwania na odpowiedź Modbus.
-#define ENABLE_WAVESHARE_SAFE_DRIVER_TEST 0
-#define WAVESHARE_SAFE_DRIVER_TEST_CHANNEL 1
-#define WAVESHARE_SAFE_DRIVER_TEST_INTERVAL_MS 2000
-
 // Waveshare RTU Modbus Relay Module 8CH - spryskiwacze.
 // Harmonogram i czasy normalnej pracy pozostają w OpenHAB.
 #define ENABLE_SPRINKLER_MODULE 1
-#define SPRINKLER_RELAY_SLAVE_ID HouseConfig::Modbus::SPRINKLER_RELAY_SLAVE_ID
 #define SPRINKLER_ZONE_COUNT ChildId::SPRINKLER_COUNT
 #define SPRINKLER_ALLOW_MULTIPLE_ZONES 0
 #define SPRINKLER_MAX_RUNTIME_MS (45UL * 60UL * 1000UL)
