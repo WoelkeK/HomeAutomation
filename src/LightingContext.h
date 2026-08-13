@@ -6,7 +6,7 @@
 #include "RelayTypes.h"
 struct LightingContext
 {
-  RelayChannel relays[noRelays1];
-  BounceMcp debouncers[noRelays1];
-  MyMessage messages[noRelays1];
+  RelayChannel relays[LIGHT_COUNT];
+  BounceMcp debouncers[LIGHT_COUNT];
+  MyMessage messages[LIGHT_COUNT];
 };

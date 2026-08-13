@@ -7,11 +7,6 @@
 #define RELAY_ON 0
 #define RELAY_OFF 1
 
-// Liczba kanałów
-#define noRelays1 20
-#define noRelays3 7
-#define noRelays4 7
-
 // Adresy MCP23017
 const byte addr1 = 0x00; // uwaga: zamieniony adres z 3
 const byte addr2 = 0x01;
@@ -44,3 +39,7 @@ const int numReadings = 100;
 #define SPRINKLER_ZONE_COUNT ChildId::SPRINKLER_COUNT
 #define SPRINKLER_ALLOW_MULTIPLE_ZONES 0
 #define SPRINKLER_MAX_RUNTIME_MS (45UL * 60UL * 1000UL)
+
+// Waveshare RTU Modbus Relays Światła i rolety
+#define LIGHT_COUNT 20
+#define ROLLER_COUNT 8

@@ -10,171 +10,168 @@
 
 class RollerShutterController
 {
-  public:
-    RollerShutterController(
-      OutputManager& outputManager,
-      RollerContext& rollerContext
-    )
+public:
+  RollerShutterController(
+      OutputManager &outputManager,
+      RollerContext &rollerContext)
       : outputManager(outputManager),
         rollerContext(rollerContext)
+  {
+  }
+
+  void moveUp(byte rollerIndex)
+  {
+    if (rollerIndex >= ROLLER_COUNT)
+      return;
+
+    const unsigned long currentMillis = millis();
+
+    rollerContext.upRelays[rollerIndex].buttonPushedMillis =
+        currentMillis;
+
+    rollerContext.upRelays[rollerIndex].ROLReady = true;
+  }
+
+  void moveDown(byte rollerIndex)
+  {
+    if (rollerIndex >= ROLLER_COUNT)
+      return;
+
+    const unsigned long currentMillis = millis();
+
+    rollerContext.downRelays[rollerIndex].buttonPushedMillis =
+        currentMillis;
+
+    rollerContext.downRelays[rollerIndex].ROLReady = true;
+  }
+
+  void stop(byte rollerIndex)
+  {
+    if (rollerIndex >= ROLLER_COUNT)
+      return;
+
+    TimedRelayChannel &upRelay =
+        rollerContext.upRelays[rollerIndex];
+
+    TimedRelayChannel &downRelay =
+        rollerContext.downRelays[rollerIndex];
+
+    upRelay.ROLReady = false;
+    downRelay.ROLReady = false;
+
+    if (!upRelay.relayState)
     {
+      outputManager.toggleRoller(
+          ROLLERS[rollerIndex].upOutput,
+          upRelay);
     }
 
-    void update()
+    if (!downRelay.relayState)
     {
-      const unsigned long currentMillis = millis();
+      outputManager.toggleRoller(
+          ROLLERS[rollerIndex].downOutput,
+          downRelay);
+    }
+  }
 
-      for (byte k = 0; k < noRelays3; k++) {
+  void update()
+  {
+    const unsigned long currentMillis = millis();
 
-        // GORA
-        if (rollerContext.upDebouncers[k].update()) {
-          const int value3 =
-              rollerContext.upDebouncers[k].read();
+    for (byte k = 0; k < ROLLER_COUNT; k++)
+    {
 
-          if (value3 == LOW) {
-            rollerContext.upRelays[k].buttonPushedMillis =
-                currentMillis;
+      processDirection(
+          currentMillis,
+          rollerContext.upRelays[k],
+          rollerContext.downRelays[k],
+          rollerContext.upDebouncers[k],
+          rollerContext.upMessages[k],
+          rollerContext.downMessages[k],
+          ROLLERS[k].upOutput,
+          ROLLERS[k].downOutput);
 
-            rollerContext.upRelays[k].ROLReady = true;
-          }
-        }
+      processDirection(
+          currentMillis,
+          rollerContext.downRelays[k],
+          rollerContext.upRelays[k],
+          rollerContext.downDebouncers[k],
+          rollerContext.downMessages[k],
+          rollerContext.upMessages[k],
+          ROLLERS[k].downOutput,
+          ROLLERS[k].upOutput);
+    }
+  }
 
-        if (rollerContext.upRelays[k].ROLReady) {
-          rollerContext.downRelays[k].ROLReady = false;
+private:
+  OutputManager &outputManager;
+  RollerContext &rollerContext;
 
-          if (!rollerContext.downRelays[k].relayState) {
-            outputManager.toggleRoller(
-              ROLLER_DOWN_CHANNELS[k].output,
-              rollerContext.downRelays[k]
-            );
-
-            send(
-              rollerContext.downMessages[k].set(
-                rollerContext.downRelays[k].relayState
-              )
-            );
-          }
-
-          if (
-            static_cast<unsigned long>(
-              currentMillis -
-              rollerContext.upRelays[k].buttonPushedMillis
-            ) > rollerContext.upRelays[k].turnOnDelay
-          ) {
-            outputManager.toggleRoller(
-              ROLLER_UP_CHANNELS[k].output,
-              rollerContext.upRelays[k]
-            );
-
-            send(
-              rollerContext.upMessages[k].set(
-                rollerContext.upRelays[k].relayState
-              )
-            );
-
-            rollerContext.upRelays[k].ledTurnedOnAt =
-                currentMillis;
-
-            rollerContext.upRelays[k].ROLReady = false;
-          }
-        }
-
-        if (!rollerContext.upRelays[k].relayState) {
-          if (
-            static_cast<unsigned long>(
-              currentMillis -
-              rollerContext.upRelays[k].ledTurnedOnAt
-            ) >= rollerContext.upRelays[k].turnOffDelay
-          ) {
-            outputManager.toggleRoller(
-              ROLLER_UP_CHANNELS[k].output,
-              rollerContext.upRelays[k]
-            );
-
-            send(
-              rollerContext.upMessages[k].set(
-                rollerContext.upRelays[k].relayState
-              )
-            );
-          }
-        }
-
-        // DOL
-        if (rollerContext.downDebouncers[k].update()) {
-          const int value4 =
-              rollerContext.downDebouncers[k].read();
-
-          if (value4 == LOW) {
-            rollerContext.downRelays[k].buttonPushedMillis =
-                currentMillis;
-
-            rollerContext.downRelays[k].ROLReady = true;
-          }
-        }
-
-        if (rollerContext.downRelays[k].ROLReady) {
-          rollerContext.upRelays[k].ROLReady = false;
-
-          if (!rollerContext.upRelays[k].relayState) {
-            outputManager.toggleRoller(
-              ROLLER_UP_CHANNELS[k].output,
-              rollerContext.upRelays[k]
-            );
-
-            send(
-              rollerContext.upMessages[k].set(
-                rollerContext.upRelays[k].relayState
-              )
-            );
-          }
-
-          if (
-            static_cast<unsigned long>(
-              currentMillis -
-              rollerContext.downRelays[k].buttonPushedMillis
-            ) > rollerContext.downRelays[k].turnOnDelay
-          ) {
-            outputManager.toggleRoller(
-              ROLLER_DOWN_CHANNELS[k].output,
-              rollerContext.downRelays[k]
-            );
-
-            send(
-              rollerContext.downMessages[k].set(
-                rollerContext.downRelays[k].relayState
-              )
-            );
-
-            rollerContext.downRelays[k].ledTurnedOnAt =
-                currentMillis;
-
-            rollerContext.downRelays[k].ROLReady = false;
-          }
-        }
-
-        if (!rollerContext.downRelays[k].relayState) {
-          if (
-            static_cast<unsigned long>(
-              currentMillis -
-              rollerContext.downRelays[k].ledTurnedOnAt
-            ) >= rollerContext.downRelays[k].turnOffDelay
-          ) {
-            outputManager.toggleRoller(
-              ROLLER_DOWN_CHANNELS[k].output,
-              rollerContext.downRelays[k]
-            );
-
-            send(
-              rollerContext.downMessages[k].set(
-                rollerContext.downRelays[k].relayState
-              )
-            );
-          }
-        }
+  void processDirection(
+      unsigned long currentMillis,
+      TimedRelayChannel &relay,
+      TimedRelayChannel &oppositeRelay,
+      BounceMcp &debouncer,
+      MyMessage &message,
+      MyMessage &oppositeMessage,
+      const OutputConfig &output,
+      const OutputConfig &oppositeOutput)
+  {
+    if (debouncer.update())
+    {
+      if (debouncer.read() == LOW)
+      {
+        relay.buttonPushedMillis = currentMillis;
+        relay.ROLReady = true;
       }
     }
 
-  private:
-    OutputManager& outputManager;
-    RollerContext& rollerContext;
+    if (relay.ROLReady)
+    {
+      oppositeRelay.ROLReady = false;
+
+      if (!oppositeRelay.relayState)
+      {
+        outputManager.toggleRoller(
+            oppositeOutput,
+            oppositeRelay);
+
+        send(
+            oppositeMessage.set(
+                oppositeRelay.relayState));
+      }
+
+      if (
+          static_cast<unsigned long>(
+              currentMillis - relay.buttonPushedMillis) > relay.turnOnDelay)
+      {
+        outputManager.toggleRoller(
+            output,
+            relay);
+
+        send(
+            message.set(
+                relay.relayState));
+
+        relay.ledTurnedOnAt = currentMillis;
+        relay.ROLReady = false;
+      }
+    }
+
+    if (!relay.relayState)
+    {
+      if (
+          static_cast<unsigned long>(
+              currentMillis - relay.ledTurnedOnAt) >= relay.turnOffDelay)
+      {
+        outputManager.toggleRoller(
+            output,
+            relay);
+
+        send(
+            message.set(
+                relay.relayState));
+      }
+    }
+  }
 };

@@ -26,6 +26,7 @@
 #include <Wire.h>
 #include "Adafruit_MCP23017.h"
 #include <Bounce2mcp.h>
+
 #include "HardwareContext.h"
 #include "Version.h"
 #include "ChildIds.h"
@@ -46,6 +47,9 @@
 #include "Mcp23017Manager.h"
 #include "LightingContext.h"
 #include "RollerContext.h"
+#include "RollerShutterController.h"
+#include "MySensorsGateway.h"
+#include "Application.h"
 
 Adafruit_MCP23017 mcp1;
 Adafruit_MCP23017 mcp2;
@@ -56,29 +60,28 @@ HardwareContext hardware;
 RollerContext rollerContext;
 LightingContext lightingContext;
 
-SprinklerController sprinklerController;
-
 Mcp23017Manager mcpManager;
 
-#include "MySensorsGateway.h"
-#include "Application.h"
-
 OutputManager outputManager(
-  hardware.outputDriver
-);
+    hardware.outputDriver);
+
+SprinklerController sprinklerController;
+
+RollerShutterController rollerShutterController(
+    outputManager,
+    rollerContext);
 
 Application application(
-  outputManager,
-  mcpManager,
-  lightingContext,
-  rollerContext
-);
+    outputManager,
+    mcpManager,
+    lightingContext,
+    rollerContext);
 
 MySensorsGateway mySensorsGateway(
-  outputManager,
-  lightingContext,
-  sprinklerController
-);
+    outputManager,
+    lightingContext,
+    sprinklerController,
+    rollerShutterController);
 
 void before()
 {
@@ -96,43 +99,37 @@ void setup()
 #if ENABLE_WAVESHARE_MODBUS
 
   hardware.modbusManager.begin(
-    MODBUS_RTU_SERIAL,
-    MODBUS_RTU_BAUD_RATE
-  );
+      MODBUS_RTU_SERIAL,
+      MODBUS_RTU_BAUD_RATE);
 
   // Światła - Waveshare 32CH
   hardware.lightRelayModule.begin(
-  hardware.modbusManager,
-  HouseConfig::Modbus::LIGHT_RELAY_SLAVE_ID,
-  HouseConfig::Modbus::LIGHT_RELAY_CHANNEL_COUNT
-);
+      hardware.modbusManager,
+      HouseConfig::Modbus::LIGHT_RELAY_SLAVE_ID,
+      HouseConfig::Modbus::LIGHT_RELAY_CHANNEL_COUNT);
+
   // Rolety - Waveshare 16CH
   hardware.rollerRelayModule.begin(
-    hardware.modbusManager,
-    HouseConfig::Modbus::ROLLER_RELAY_SLAVE_ID,
-    HouseConfig::Modbus::ROLLER_RELAY_CHANNEL_COUNT
-  );
+      hardware.modbusManager,
+      HouseConfig::Modbus::ROLLER_RELAY_SLAVE_ID,
+      HouseConfig::Modbus::ROLLER_RELAY_CHANNEL_COUNT);
 
   hardware.outputDriver.attachLightModule(
-    hardware.lightRelayModule
-  );
+      hardware.lightRelayModule);
 
   hardware.outputDriver.attachRollerModule(
-    hardware.rollerRelayModule
-  );
+      hardware.rollerRelayModule);
 
 #if ENABLE_SPRINKLER_MODULE
 
   // Spryskiwacze - Waveshare 8CH
   hardware.sprinklerRelayModule.begin(
-    hardware.modbusManager,
-    HouseConfig::Modbus::SPRINKLER_RELAY_SLAVE_ID,
-    SPRINKLER_ZONE_COUNT
-  );
+      hardware.modbusManager,
+      HouseConfig::Modbus::SPRINKLER_RELAY_SLAVE_ID,
+      SPRINKLER_ZONE_COUNT);
 
   sprinklerController.begin(
-    hardware.sprinklerRelayModule
-  );
+      hardware.sprinklerRelayModule);
 
 #endif
 #endif
@@ -140,9 +137,8 @@ void setup()
 #if ENABLE_SDM630_METER
 
   hardware.sdm630Meter.begin(
-  hardware.modbusMaster,
-  SDM630_DEFAULT_SLAVE_ID
-  );
+      hardware.modbusMaster,
+      SDM630_DEFAULT_SLAVE_ID);
 
 #endif
 
@@ -171,7 +167,7 @@ void loop()
 #endif
 }
 
-void receive(const MyMessage& message)
+void receive(const MyMessage &message)
 {
   mySensorsGateway.handleMessage(message);
 }

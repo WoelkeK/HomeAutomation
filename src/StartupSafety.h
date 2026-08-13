@@ -21,32 +21,34 @@ inline void setPinSafeOff(int pin)
 inline void prepareLocalRelayPinsSafeOff()
 {
   // ŚWIATŁA
-  for (int i = 0; i < noRelays1; i++) {
-    const OutputConfig& output =
+  for (int i = 0; i < LIGHT_COUNT; i++)
+  {
+    const OutputConfig &output =
         LIGHT_CHANNELS[i].output;
 
-    if (output.type == OutputType::MegaPin) {
+    if (output.type == OutputType::MegaPin)
+    {
       setPinSafeOff(output.megaPin);
     }
   }
 
-  // ROLETY - GÓRA
-  for (int i = 0; i < noRelays3; i++) {
-    const OutputConfig& output =
-        ROLLER_UP_CHANNELS[i].output;
+  // ROLETY
+  for (int i = 0; i < ROLLER_COUNT; i++)
+  {
+    const OutputConfig &upOutput =
+        ROLLERS[i].upOutput;
 
-    if (output.type == OutputType::MegaPin) {
-      setPinSafeOff(output.megaPin);
+    const OutputConfig &downOutput =
+        ROLLERS[i].downOutput;
+
+    if (upOutput.type == OutputType::MegaPin)
+    {
+      setPinSafeOff(upOutput.megaPin);
     }
-  }
 
-  // ROLETY - DÓŁ
-  for (int i = 0; i < noRelays4; i++) {
-    const OutputConfig& output =
-        ROLLER_DOWN_CHANNELS[i].output;
-
-    if (output.type == OutputType::MegaPin) {
-      setPinSafeOff(output.megaPin);
+    if (downOutput.type == OutputType::MegaPin)
+    {
+      setPinSafeOff(downOutput.megaPin);
     }
   }
 }

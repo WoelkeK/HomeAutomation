@@ -13,10 +13,10 @@ Główna wersja projektu sterownika domu na Arduino Mega 2560.
 
 ## Magistrale
 
-| Funkcja | Port Mega | Uwagi |
-|---|---:|---|
-| MySensors / OpenHAB | Serial2 | obecna bramka Arduino Uno + Raspberry Pi |
-| Modbus RTU | Serial1 | Waveshare TTL TO RS485 (C), TX1=18, RX1=19 |
+| Funkcja             | Port Mega | Uwagi                                      |
+| ------------------- | --------: | ------------------------------------------ |
+| MySensors / OpenHAB |   Serial2 | obecna bramka Arduino Uno + Raspberry Pi   |
+| Modbus RTU          |   Serial1 | Waveshare TTL TO RS485 (C), TX1=18, RX1=19 |
 
 ## Modbus
 
@@ -40,3 +40,37 @@ Zmiana przewodów w rozdzielni wymaga zmiany tylko tej tabeli.
 ## Ważne
 
 W tej wersji wszystkie światła są kierowane na Waveshare. Jeżeli fizycznie dany obwód nadal jest podłączony do lokalnego przekaźnika Mega, nie zadziała, dopóki nie zostanie przepięty na odpowiadający kanał Waveshare.
+Application
+│
+├── Bootstrap
+│
+├── Gateway
+│ └── MySensorsGateway
+│
+├── Controllers
+│ ├── LightingController
+│ ├── RollerController
+│ ├── SprinklerController
+│ └── SensorController
+│
+├── Services
+│ ├── OutputManager
+│ ├── ModbusManager
+│ ├── Mcp23017Manager
+│ └── EEPROMManager
+│
+├── Hardware
+│ ├── ModbusRelayDevice
+│ ├── SDM630
+│ └── Deye
+│
+├── Configuration
+│ ├── LightConfig
+│ ├── RollerConfig
+│ ├── SprinklerConfig
+│ └── HouseConfig
+│
+└── Context
+├── LightingContext
+├── RollerContext
+└── SprinklerContext

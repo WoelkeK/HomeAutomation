@@ -7,12 +7,12 @@
 #include "RelayTypes.h"
 struct RollerContext
 {
-  TimedRelayChannel upRelays[noRelays3];
-  TimedRelayChannel downRelays[noRelays4];
+  TimedRelayChannel upRelays[ROLLER_COUNT];
+  TimedRelayChannel downRelays[ROLLER_COUNT];
 
-  BounceMcp upDebouncers[noRelays3];
-  BounceMcp downDebouncers[noRelays4];
+  BounceMcp upDebouncers[ROLLER_COUNT];
+  BounceMcp downDebouncers[ROLLER_COUNT];
 
-  MyMessage upMessages[noRelays3];
-  MyMessage downMessages[noRelays4];
+  MyMessage upMessages[ROLLER_COUNT];
+  MyMessage downMessages[ROLLER_COUNT];
 };

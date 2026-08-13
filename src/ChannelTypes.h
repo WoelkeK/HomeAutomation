@@ -21,11 +21,18 @@ struct LightChannelConfig
   OutputConfig output;
 };
 
-struct RollerChannelConfig
+struct RollerConfig
 {
   byte sensorId;
-  int buttonPin;
+
+  int upButtonPin;
+  int downButtonPin;
+
   InputDevice buttonDevice;
-  OutputConfig output;
-  unsigned long turnOffDelay;
+
+  OutputConfig upOutput;
+  OutputConfig downOutput;
+
+  unsigned long upTurnOffDelay;
+  unsigned long downTurnOffDelay;
 };
