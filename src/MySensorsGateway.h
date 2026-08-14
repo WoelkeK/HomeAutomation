@@ -73,18 +73,29 @@ public:
 
   void handleMessage(const MyMessage &message)
   {
+    // Wiadomości raportowane przez inne node'y
+    // nie mogą sterować lokalnymi wyjściami Mastera.
+    if (message.sender != 0)
+    {
+      return;
+    }
+
     if ((message.type == V_LIGHT || message.type == V_STATUS) &&
         message.sensor >= ChildId::LIGHT_FIRST &&
         message.sensor <= ChildId::LIGHT_LAST)
     {
-      const byte lightIndex = message.sensor - ChildId::LIGHT_FIRST;
+      const byte lightIndex =
+          message.sensor - ChildId::LIGHT_FIRST;
 
       outputManager.writeLight(
           lightIndex,
           lightingContext.relays[lightIndex],
           message.getBool());
 
-      saveState(lightIndex, lightingContext.relays[lightIndex].relayState);
+      saveState(
+          lightIndex,
+          lightingContext.relays[lightIndex].relayState);
+
       return;
     }
 

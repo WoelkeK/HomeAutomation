@@ -15,6 +15,10 @@
 #define MY_GATEWAY_SERIAL
 #define MY_BAUD_RATE 115200
 
+// Najpierqw włączamy debugowanie, aby mieć możliwość debugowania w przypadku problemów z komunikacją RS485.
+//  OH trzeba wczesniej zatrzymać, bo bramka nie będzie działać, również uzywa serial0
+//  #define MY_DEBUG
+
 #define MY_RS485
 #define MY_RS485_BAUD_RATE 19200
 #define MY_RS485_HWSERIAL Serial2
