@@ -15,10 +15,14 @@ enum class InputDevice : byte
 struct LightChannelConfig
 {
   LightId id;
-  byte sensorId;
   int buttonPin;
   InputDevice buttonDevice;
   OutputConfig output;
+
+  byte childId() const
+  {
+    return static_cast<byte>(id);
+  }
 };
 
 struct RollerConfig

@@ -32,10 +32,16 @@ public:
     sendSketchInfo(FIRMWARE_NAME, FIRMWARE_VERSION);
     present(ChildId::OUTDOOR_LIGHT_SENSOR, S_LIGHT_LEVEL);
 
+    // prezaentacja wszystkich wyjść światła
+
     for (int i = 0; i < LIGHT_COUNT; i++)
     {
-      present(ChildId::LIGHT_FIRST + i, S_LIGHT);
+      present(
+          LIGHT_CHANNELS[i].childId(),
+          S_LIGHT,
+          lightName(LIGHT_CHANNELS[i].id));
     }
+    // prezentacja wszystkich rolet
 
     for (byte i = 0; i < ROLLER_COUNT; i++)
     {
@@ -81,11 +87,9 @@ public:
     }
 
     if ((message.type == V_LIGHT || message.type == V_STATUS) &&
-        message.sensor >= ChildId::LIGHT_FIRST &&
-        message.sensor <= ChildId::LIGHT_LAST)
+        message.sensor < LIGHT_COUNT)
     {
-      const byte lightIndex =
-          message.sensor - ChildId::LIGHT_FIRST;
+      const byte lightIndex = message.sensor;
 
       outputManager.writeLight(
           lightIndex,

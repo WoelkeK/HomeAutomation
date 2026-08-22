@@ -54,6 +54,8 @@
 #include "RollerShutterController.h"
 #include "MySensorsGateway.h"
 #include "Application.h"
+#include "RemoteLightingContext.h"
+#include "RemoteLightingController.h"
 
 Adafruit_MCP23017 mcp1;
 Adafruit_MCP23017 mcp2;
@@ -63,6 +65,7 @@ HardwareContext hardware;
 
 RollerContext rollerContext;
 LightingContext lightingContext;
+RemoteLightingContext remoteLightingContext;
 
 Mcp23017Manager mcpManager;
 
@@ -79,7 +82,14 @@ Application application(
     outputManager,
     mcpManager,
     lightingContext,
-    rollerContext);
+    rollerContext,
+    remoteLightingContext);
+
+RemoteLightingController remoteLightingController(
+    remoteLightingContext,
+    1, // Slave node ID
+    7  // Child ID na Slave
+);
 
 MySensorsGateway mySensorsGateway(
     outputManager,
@@ -164,6 +174,7 @@ void presentation()
 void loop()
 {
   application.update();
+  remoteLightingController.update();
   mySensorsGateway.update();
 
 #if ENABLE_SPRINKLER_MODULE
@@ -173,5 +184,6 @@ void loop()
 
 void receive(const MyMessage &message)
 {
+  remoteLightingController.handleMessage(message);
   mySensorsGateway.handleMessage(message);
 }

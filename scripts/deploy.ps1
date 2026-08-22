@@ -1,7 +1,7 @@
 
 $ErrorActionPreference = "Stop"
 
-$PiHost = "192.168.5.179"
+$PiHost = "192.168.5.163"
 $PiUser = "openhabian"
 
 $ProjectRoot = Split-Path -Parent $PSScriptRoot

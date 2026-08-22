@@ -10,164 +10,193 @@
 #include "Mcp23017Manager.h"
 #include "LightingContext.h"
 #include "RollerContext.h"
+#include "RemoteLightingContext.h"
 
 class SetupManager
 {
 public:
-  SetupManager(
-      OutputManager &outputManager,
-      Mcp23017Manager &mcpManager,
-      LightingContext &lightingContext,
-      RollerContext &rollerContext)
-      : outputManager(outputManager),
-        mcpManager(mcpManager),
-        lightingContext(lightingContext),
-        rollerContext(rollerContext)
-  {
-  }
+    SetupManager(
+        OutputManager &outputManager,
+        Mcp23017Manager &mcpManager,
+        LightingContext &lightingContext,
+        RollerContext &rollerContext,
+        RemoteLightingContext &remoteLightingContext)
+        : outputManager(outputManager),
+          mcpManager(mcpManager),
+          lightingContext(lightingContext),
+          rollerContext(rollerContext),
+          remoteLightingContext(remoteLightingContext)
+    {
+    }
 
-  void begin()
-  {
-    initializeHardware();
-    initializeLights();
-    initializeRollers();
-  }
+    void begin()
+    {
+        initializeHardware();
+        initializeLights();
+        initializeRollers();
+        initializeRemoteLighting();
+    }
 
 private:
-  OutputManager &outputManager;
-  Mcp23017Manager &mcpManager;
-  LightingContext &lightingContext;
-  RollerContext &rollerContext;
+    OutputManager &outputManager;
+    Mcp23017Manager &mcpManager;
+    LightingContext &lightingContext;
+    RollerContext &rollerContext;
+    RemoteLightingContext &remoteLightingContext;
 
-  void initializeHardware()
-  {
-    mcpManager.begin();
-  }
-
-  void initializeLights()
-  {
-    for (int i = 0; i < LIGHT_COUNT; i++)
+    void initializeHardware()
     {
-      lightingContext.messages[i].sensor =
-          LIGHT_CHANNELS[i].sensorId;
+        mcpManager.begin();
+    }
 
-      lightingContext.messages[i].type =
-          V_LIGHT;
+    void initializeLights()
+    {
+        for (int i = 0; i < LIGHT_COUNT; i++)
+        {
+            lightingContext.messages[i].sensor =
+                LIGHT_CHANNELS[i].childId();
 
-      mcpManager.configureInput(
-          LIGHT_CHANNELS[i].buttonDevice,
-          LIGHT_CHANNELS[i].buttonPin);
+            lightingContext.messages[i].type =
+                V_LIGHT;
 
-      lightingContext.debouncers[i] = BounceMcp();
+            mcpManager.configureInput(
+                LIGHT_CHANNELS[i].buttonDevice,
+                LIGHT_CHANNELS[i].buttonPin);
 
-      lightingContext.debouncers[i].attach(
-          mcpManager.device(
-              LIGHT_CHANNELS[i].buttonDevice),
-          LIGHT_CHANNELS[i].buttonPin,
-          100);
+            lightingContext.debouncers[i] = BounceMcp();
 
-      lightingContext.debouncers[i].interval(50);
+            lightingContext.debouncers[i].attach(
+                mcpManager.device(
+                    LIGHT_CHANNELS[i].buttonDevice),
+                LIGHT_CHANNELS[i].buttonPin,
+                100);
 
-      outputManager.safeOff(
-          LIGHT_CHANNELS[i].output);
+            lightingContext.debouncers[i].interval(50);
+
+            outputManager.safeOff(
+                LIGHT_CHANNELS[i].output);
 
 #if RESTORE_LIGHTS_FROM_EEPROM_ON_BOOT
-      lightingContext.relays[i].relayState =
-          loadState(i);
+            lightingContext.relays[i].relayState =
+                loadState(i);
 #else
-      lightingContext.relays[i].relayState =
-          false;
+            lightingContext.relays[i].relayState =
+                false;
 #endif
 
-      outputManager.writeLight(
-          i,
-          lightingContext.relays[i],
-          lightingContext.relays[i].relayState);
+            outputManager.writeLight(
+                i,
+                lightingContext.relays[i],
+                lightingContext.relays[i].relayState);
 
-      send(
-          lightingContext.messages[i].set(
-              lightingContext.relays[i].relayState));
+            send(
+                lightingContext.messages[i].set(
+                    lightingContext.relays[i].relayState));
+        }
     }
-  }
-  void initializeRollers()
-  {
-    for (int k = 0; k < ROLLER_COUNT; k++)
+    void initializeRollers()
     {
-      const RollerConfig &config = ROLLERS[k];
+        for (int k = 0; k < ROLLER_COUNT; k++)
+        {
+            const RollerConfig &config = ROLLERS[k];
 
-      // GÓRA
-      rollerContext.upRelays[k].turnOffDelay =
-          config.upTurnOffDelay;
+            // GÓRA
+            rollerContext.upRelays[k].turnOffDelay =
+                config.upTurnOffDelay;
 
-      rollerContext.upMessages[k].sensor =
-          config.sensorId;
+            rollerContext.upMessages[k].sensor =
+                config.sensorId;
 
-      rollerContext.upMessages[k].type =
-          V_LIGHT;
+            rollerContext.upMessages[k].type =
+                V_LIGHT;
 
-      mcpManager.configureInput(
-          config.buttonDevice,
-          config.upButtonPin);
+            mcpManager.configureInput(
+                config.buttonDevice,
+                config.upButtonPin);
 
-      outputManager.safeOff(
-          config.upOutput);
+            outputManager.safeOff(
+                config.upOutput);
 
-      outputManager.writeRoller(
-          config.upOutput,
-          rollerContext.upRelays[k],
-          true);
+            outputManager.writeRoller(
+                config.upOutput,
+                rollerContext.upRelays[k],
+                true);
 
-      send(
-          rollerContext.upMessages[k].set(
-              rollerContext.upRelays[k].relayState));
+            send(
+                rollerContext.upMessages[k].set(
+                    rollerContext.upRelays[k].relayState));
 
-      rollerContext.upDebouncers[k] =
-          BounceMcp();
+            rollerContext.upDebouncers[k] =
+                BounceMcp();
 
-      rollerContext.upDebouncers[k].attach(
-          mcpManager.device(
-              config.buttonDevice),
-          config.upButtonPin,
-          100);
+            rollerContext.upDebouncers[k].attach(
+                mcpManager.device(
+                    config.buttonDevice),
+                config.upButtonPin,
+                100);
 
-      rollerContext.upDebouncers[k].interval(50);
+            rollerContext.upDebouncers[k].interval(50);
 
-      // DÓŁ
-      rollerContext.downRelays[k].turnOffDelay =
-          config.downTurnOffDelay;
+            // DÓŁ
+            rollerContext.downRelays[k].turnOffDelay =
+                config.downTurnOffDelay;
 
-      rollerContext.downMessages[k].sensor =
-          config.sensorId;
+            rollerContext.downMessages[k].sensor =
+                config.sensorId;
 
-      rollerContext.downMessages[k].type =
-          V_LIGHT;
+            rollerContext.downMessages[k].type =
+                V_LIGHT;
 
-      mcpManager.configureInput(
-          config.buttonDevice,
-          config.downButtonPin);
+            mcpManager.configureInput(
+                config.buttonDevice,
+                config.downButtonPin);
 
-      outputManager.safeOff(
-          config.downOutput);
+            outputManager.safeOff(
+                config.downOutput);
 
-      outputManager.writeRoller(
-          config.downOutput,
-          rollerContext.downRelays[k],
-          true);
+            outputManager.writeRoller(
+                config.downOutput,
+                rollerContext.downRelays[k],
+                true);
 
-      send(
-          rollerContext.downMessages[k].set(
-              rollerContext.downRelays[k].relayState));
+            send(
+                rollerContext.downMessages[k].set(
+                    rollerContext.downRelays[k].relayState));
 
-      rollerContext.downDebouncers[k] =
-          BounceMcp();
+            rollerContext.downDebouncers[k] =
+                BounceMcp();
 
-      rollerContext.downDebouncers[k].attach(
-          mcpManager.device(
-              config.buttonDevice),
-          config.downButtonPin,
-          100);
+            rollerContext.downDebouncers[k].attach(
+                mcpManager.device(
+                    config.buttonDevice),
+                config.downButtonPin,
+                100);
 
-      rollerContext.downDebouncers[k].interval(50);
+            rollerContext.downDebouncers[k].interval(50);
+        }
     }
-  }
+    void initializeRemoteLighting()
+    {
+        constexpr byte REMOTE_BUTTON_PIN = 14;
+        constexpr byte REMOTE_CHILD_ID = 7;
+
+        mcpManager.configureInput(
+            InputDevice::MCP1,
+            REMOTE_BUTTON_PIN);
+
+        remoteLightingContext.debouncer = BounceMcp();
+
+        remoteLightingContext.debouncer.attach(
+            mcpManager.device(InputDevice::MCP1),
+            REMOTE_BUTTON_PIN,
+            100);
+
+        remoteLightingContext.debouncer.interval(50);
+
+        remoteLightingContext.message.sensor =
+            REMOTE_CHILD_ID;
+
+        remoteLightingContext.message.type =
+            V_STATUS;
+    }
 };
