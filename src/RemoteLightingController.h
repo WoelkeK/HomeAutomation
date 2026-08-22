@@ -3,72 +3,76 @@
 #include <Arduino.h>
 #include <MySensors.h>
 
+#include "RemoteLightConfig.h"
 #include "RemoteLightingContext.h"
 
 class RemoteLightingController
 {
 public:
-    RemoteLightingController(
-        RemoteLightingContext &context,
-        byte destinationNodeId,
-        byte destinationChildId)
-        : context(context),
-          destinationNodeId(destinationNodeId),
-          destinationChildId(destinationChildId)
+    explicit RemoteLightingController(
+        RemoteLightingContext &context)
+        : context(context)
     {
     }
 
     void update()
     {
-        if (!context.debouncer.update())
+        for (byte i = 0; i < REMOTE_LIGHT_COUNT; i++)
         {
-            return;
+            if (!context.debouncers[i].update())
+            {
+                continue;
+            }
+
+            if (context.debouncers[i].read() != LOW)
+            {
+                continue;
+            }
+
+            const bool newState =
+                context.statesKnown[i]
+                    ? !context.states[i]
+                    : true;
+
+            context.messages[i].setDestination(
+                REMOTE_LIGHTS[i].destinationNodeId);
+
+            send(
+                context.messages[i].set(
+                    newState));
+
+            context.states[i] = newState;
+            context.statesKnown[i] = true;
         }
-
-        if (context.debouncer.read() != LOW)
-        {
-            return;
-        }
-
-        const bool newState =
-            context.stateKnown ? !context.state : true;
-
-        context.message.setDestination(
-            destinationNodeId);
-
-        send(
-            context.message.set(
-                newState));
-
-        context.state = newState;
-        context.stateKnown = true;
     }
 
     void handleMessage(const MyMessage &message)
     {
-        if (message.sender != destinationNodeId)
+        for (byte i = 0; i < REMOTE_LIGHT_COUNT; i++)
         {
+            if (message.sender != REMOTE_LIGHTS[i].destinationNodeId)
+            {
+                continue;
+            }
+
+            if (message.sensor != REMOTE_LIGHTS[i].destinationChildId)
+            {
+                continue;
+            }
+
+            if (message.type != V_LIGHT &&
+                message.type != V_STATUS)
+            {
+                continue;
+            }
+
+            context.states[i] = message.getBool();
+            context.statesKnown[i] = true;
+
             return;
         }
-
-        if (message.sensor != destinationChildId)
-        {
-            return;
-        }
-
-        if (message.type != V_LIGHT &&
-            message.type != V_STATUS)
-        {
-            return;
-        }
-
-        context.state = message.getBool();
-        context.stateKnown = true;
     }
 
 private:
     RemoteLightingContext &context;
-
-    byte destinationNodeId;
-    byte destinationChildId;
 };

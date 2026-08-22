@@ -3,11 +3,13 @@
 #include <MySensors.h>
 #include <Bounce2mcp.h>
 
+#include "RemoteLightConfig.h"
+
 struct RemoteLightingContext
 {
-    BounceMcp debouncer;
-    MyMessage message;
+    BounceMcp debouncers[REMOTE_LIGHT_COUNT];
+    MyMessage messages[REMOTE_LIGHT_COUNT];
 
-    bool state = false;
-    bool stateKnown = false;
+    bool states[REMOTE_LIGHT_COUNT] = {};
+    bool statesKnown[REMOTE_LIGHT_COUNT] = {};
 };

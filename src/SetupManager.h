@@ -177,26 +177,31 @@ private:
     }
     void initializeRemoteLighting()
     {
-        constexpr byte REMOTE_BUTTON_PIN = 14;
-        constexpr byte REMOTE_CHILD_ID = 7;
+        for (byte i = 0; i < REMOTE_LIGHT_COUNT; i++)
+        {
+            const RemoteLightConfig &config = REMOTE_LIGHTS[i];
 
-        mcpManager.configureInput(
-            InputDevice::MCP1,
-            REMOTE_BUTTON_PIN);
+            mcpManager.configureInput(
+                config.buttonDevice,
+                config.buttonPin);
 
-        remoteLightingContext.debouncer = BounceMcp();
+            remoteLightingContext.debouncers[i] = BounceMcp();
 
-        remoteLightingContext.debouncer.attach(
-            mcpManager.device(InputDevice::MCP1),
-            REMOTE_BUTTON_PIN,
-            100);
+            remoteLightingContext.debouncers[i].attach(
+                mcpManager.device(config.buttonDevice),
+                config.buttonPin,
+                100);
 
-        remoteLightingContext.debouncer.interval(50);
+            remoteLightingContext.debouncers[i].interval(50);
 
-        remoteLightingContext.message.sensor =
-            REMOTE_CHILD_ID;
+            remoteLightingContext.messages[i].sensor =
+                config.destinationChildId;
 
-        remoteLightingContext.message.type =
-            V_STATUS;
+            remoteLightingContext.messages[i].type =
+                V_STATUS;
+
+            remoteLightingContext.states[i] = false;
+            remoteLightingContext.statesKnown[i] = false;
+        }
     }
 };

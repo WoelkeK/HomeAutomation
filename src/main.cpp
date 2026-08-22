@@ -86,10 +86,7 @@ Application application(
     remoteLightingContext);
 
 RemoteLightingController remoteLightingController(
-    remoteLightingContext,
-    1, // Slave node ID
-    7  // Child ID na Slave
-);
+    remoteLightingContext);
 
 MySensorsGateway mySensorsGateway(
     outputManager,
