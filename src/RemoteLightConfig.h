@@ -13,6 +13,7 @@ struct RemoteLightConfig
 
 constexpr RemoteLightConfig REMOTE_LIGHTS[] = {
 
+    // {MCP, PIN_PRZYCISKU, NODE_SLAVE, CHILD_ID}
     // Switch na dole przy wyjściu na taras, sterowanie światłem na tarasie(Slave01, CH8)
     {
         InputDevice::MCP1,
@@ -25,7 +26,15 @@ constexpr RemoteLightConfig REMOTE_LIGHTS[] = {
         InputDevice::MCP1,
         4,
         1, // Slave01
-        16 // Child 8 = Waveshare CH9
+        16 // Child 16 = Waveshare CH17
+    },
+
+    {
+        // Switch na dole przy wyjściu głównym, sterowanie lampami chodnik Slave01 CH9){
+        InputDevice::MCP2,
+        7,
+        1, // Slave01
+        17 // Child 17 = Waveshare CH18
     }
 
 };

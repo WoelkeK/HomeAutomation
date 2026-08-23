@@ -33,13 +33,13 @@ inline const char *lightName(LightId id)
   switch (id)
   {
   case LightId::Archiwum:
-    return "Garderoba";
+    return "Archiwum";
 
   case LightId::Biuro:
-    return "Sportowy";
+    return "Biuro";
 
   case LightId::Sportowy:
-    return "Gabinet";
+    return "Sportowy";
 
   case LightId::Rozdzielnia:
     return "Rozdzielnia";
