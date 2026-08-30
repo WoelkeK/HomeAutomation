@@ -72,6 +72,7 @@ const LightChannelConfig LIGHT_CHANNELS[LIGHT_COUNT] = {
      0,
      InputDevice::MCP1,
      {OutputType::ModbusRelay, 0, HouseConfig::Modbus::LIGHT_RELAY_SLAVE_ID, 15}},
+
     {LightId::SalonSufitRGB,
 
      15,
@@ -106,4 +107,11 @@ const LightChannelConfig LIGHT_CHANNELS[LIGHT_COUNT] = {
 
      8,
      InputDevice::MCP2,
-     {OutputType::ModbusRelay, 0, HouseConfig::Modbus::LIGHT_RELAY_SLAVE_ID, 10}}};
+     {OutputType::ModbusRelay, 0, HouseConfig::Modbus::LIGHT_RELAY_SLAVE_ID, 10}},
+
+    {LightId::HolRGB,
+
+     -1,
+     InputDevice::None,
+     {OutputType::ModbusRelay, 0, HouseConfig::Modbus::LIGHT_RELAY_SLAVE_ID, 17}},
+};

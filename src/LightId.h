@@ -24,8 +24,8 @@ enum class LightId : byte
   KorytarzSchodyRGB = 16,      // sensor 16, Mega pin 42
   KorytarzHolSpot2x = 17,      // sensor 17, Mega pin A13
   KorytarzOczkaSufit = 18,     // sensor 18, Mega pin 44
-  Kotlownia = 19               // sensor 19, Mega pin 38
-
+  Kotlownia = 19,              // sensor 19, Mega pin 38
+  HolRGB = 20                  // sensor 20, Mega pin 48
 };
 
 inline const char *lightName(LightId id)
@@ -91,6 +91,9 @@ inline const char *lightName(LightId id)
 
   case LightId::Kotlownia:
     return "Kotlownia";
+
+  case LightId::HolRGB:
+    return "Hol RGB";
 
   default:
     return "Unknown";

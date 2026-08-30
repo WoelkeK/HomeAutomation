@@ -41,5 +41,5 @@ const int numReadings = 100;
 #define SPRINKLER_MAX_RUNTIME_MS (45UL * 60UL * 1000UL)
 
 // Waveshare RTU Modbus Relays Światła i rolety
-#define LIGHT_COUNT 20
+#define LIGHT_COUNT 21
 #define ROLLER_COUNT 8

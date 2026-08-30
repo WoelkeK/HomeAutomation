@@ -7,6 +7,7 @@
 
 enum class InputDevice : byte
 {
+  None,
   MCP1,
   MCP2,
   MCP3

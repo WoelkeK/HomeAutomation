@@ -20,6 +20,12 @@ public:
   {
     for (byte i = 0; i < LIGHT_COUNT; i++)
     {
+
+      if (LIGHT_CHANNELS[i].buttonDevice == InputDevice::None)
+      {
+        continue;
+      }
+
       if (!context.debouncers[i].update())
       {
         continue;

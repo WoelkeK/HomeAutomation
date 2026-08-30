@@ -59,19 +59,22 @@ private:
             lightingContext.messages[i].type =
                 V_LIGHT;
 
-            mcpManager.configureInput(
-                LIGHT_CHANNELS[i].buttonDevice,
-                LIGHT_CHANNELS[i].buttonPin);
+            if (LIGHT_CHANNELS[i].buttonDevice != InputDevice::None)
+            {
+                mcpManager.configureInput(
+                    LIGHT_CHANNELS[i].buttonDevice,
+                    LIGHT_CHANNELS[i].buttonPin);
 
-            lightingContext.debouncers[i] = BounceMcp();
+                lightingContext.debouncers[i] = BounceMcp();
 
-            lightingContext.debouncers[i].attach(
-                mcpManager.device(
-                    LIGHT_CHANNELS[i].buttonDevice),
-                LIGHT_CHANNELS[i].buttonPin,
-                100);
+                lightingContext.debouncers[i].attach(
+                    mcpManager.device(
+                        LIGHT_CHANNELS[i].buttonDevice),
+                    LIGHT_CHANNELS[i].buttonPin,
+                    100);
 
-            lightingContext.debouncers[i].interval(50);
+                lightingContext.debouncers[i].interval(50);
+            }
 
             outputManager.safeOff(
                 LIGHT_CHANNELS[i].output);
